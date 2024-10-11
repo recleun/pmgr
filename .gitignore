@@ -1,3 +1,6 @@
+# prevent .pmgr files from getting into version control
+*.pmgr
+
 # will have compiled files and executables
 debug/
 target/
