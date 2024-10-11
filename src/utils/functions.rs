@@ -1,8 +1,9 @@
+use crate::data::Project;
+use super::ExpectWith;
+
 use std::{
     env, fs::File, io, path::{Path, PathBuf}
 };
-
-use super::ExpectWith;
 
 pub type Data = serde_json::Map<String, serde_json::Value>;
 
@@ -27,7 +28,7 @@ fn check_data_with_path(path: &Path, file_name: &str) -> Option<PathBuf> {
         .and_then(|p| check_data_with_path(p, file_name))
 }
 
-pub fn get_data(file_name: Option<&str>) -> Data {
+pub fn get_data(file_name: Option<&str>) -> Project {
     let file = check_data(file_name)
         .and_then(File::open)
         .expect_with("Failed to open the project file");
