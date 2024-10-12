@@ -8,5 +8,6 @@ fn main() {
         Commands::Check(args) => args.run(None),
         Commands::Read(args) => args.run(None),
         Commands::Init(args) => args.run(None),
+        Commands::Create(args) => args.run(None),
     }
 }
