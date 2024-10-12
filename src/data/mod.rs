@@ -2,7 +2,7 @@ use serde::{Serialize, Deserialize};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Project {
-    groups: Vec<Group>,
+    pub groups: Vec<Group>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
