@@ -32,3 +32,14 @@ impl Project {
         }
     }
 }
+
+impl Group {
+    pub fn new(name: &str) -> Self {
+        Group {
+            name: name.to_string(),
+            notes: vec![],
+            tasks: vec![],
+            groups: vec![],
+        }
+    }
+}
