@@ -10,7 +10,7 @@ pub struct Group {
     name: String,
     notes: Vec<Note>,
     tasks: Vec<Task>,
-    groups: Vec<Group>,
+    groups: Vec<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
