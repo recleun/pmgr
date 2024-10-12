@@ -7,6 +7,7 @@ pub struct Project {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Group {
+    name: String,
     notes: Vec<Note>,
     tasks: Vec<Task>,
     groups: Vec<Group>,
