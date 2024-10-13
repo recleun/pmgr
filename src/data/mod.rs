@@ -7,22 +7,22 @@ pub struct Project {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Group {
-    name: String,
-    notes: Vec<Note>,
-    tasks: Vec<Task>,
-    groups: Vec<String>,
+    pub name: String,
+    pub notes: Vec<Note>,
+    pub tasks: Vec<Task>,
+    pub groups: Vec<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 struct Note {
-    id: usize,
-    note: String,
+    pub id: usize,
+    pub note: String,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 struct Task {
-    id: usize,
-    task: String,
+    pub id: usize,
+    pub task: String,
 }
 
 impl Project {
@@ -30,6 +30,10 @@ impl Project {
         Project {
             groups: vec![],
         }
+    }
+
+    pub fn get_group(&self, name: &str) -> Option<usize> {
+        self.groups.iter().position(|group| group.name == name)
     }
 }
 
