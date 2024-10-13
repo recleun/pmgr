@@ -36,16 +36,17 @@ impl Project {
         }
     }
 
-    pub fn get_group(&self, name: &str) -> Option<&Group> {
+    pub fn get_group(&self, name: &str) -> &Group {
         self.groups.get(name)
+            .expect("Specified group was not found")
     }
 
     pub fn get_group_descendants(&self, group_name: &str) -> Vec<String> {
-        let group = self.get_group(group_name).expect("Group name specified was not found");
+        let group = self.get_group(group_name);
 
         let mut children: Vec<String> = vec![];
         for child in &group.groups {
-            let g = self.get_group(child).expect("Group name specified was not found");
+            let g = self.get_group(child);
             children.push(child.to_string());
             children.append(&mut Self::get_group_descendants(self, &g.name));
         }

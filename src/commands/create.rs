@@ -19,7 +19,7 @@ impl super::Command for CreateArgs {
 
         if let Some(parent_name) = self.parent_group {
             if data.groups.contains_key(&parent_name) {
-                let mut parent = data.get_group(&parent_name).unwrap().clone();
+                let mut parent = data.get_group(&parent_name).clone();
                 parent.groups.push(self.group_name.clone());
                 data.groups.insert(parent_name, parent);
             } else {
