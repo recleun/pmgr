@@ -18,13 +18,11 @@ pub struct Group {
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
 pub struct Note {
-    pub id: usize,
     pub note: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
 pub struct Task {
-    pub id: usize,
     pub task: String,
 }
 
@@ -62,6 +60,14 @@ impl Group {
             notes: vec![],
             tasks: vec![],
             groups: vec![],
+        }
+    }
+}
+
+impl Note {
+    pub fn new(note: &str) -> Self {
+        Note {
+            note: note.to_string(),
         }
     }
 }
