@@ -65,7 +65,9 @@ mod tests {
         clean(file_name.unwrap());
 
         let mut project = Project::new();
-        project.groups.append(&mut vec![Group::new("group1"), Group::new("group2"), Group::new("group3")]);
+        project.groups.insert("group1".to_string(), Group::new("group1"));
+        project.groups.insert("group2".to_string(), Group::new("group2"));
+        project.groups.insert("group3".to_string(), Group::new("group3"));
 
         commands::init::InitArgs.run(file_name);
 
@@ -120,7 +122,11 @@ mod tests {
         group2.groups.push("group4".to_string());
         group4.groups.push("group5".to_string());
 
-        project.groups.append(&mut vec![group1, group2, group3, group4, group5]);
+        project.groups.insert(group1.name.to_string(), group1);
+        project.groups.insert(group2.name.to_string(), group2);
+        project.groups.insert(group3.name.to_string(), group3);
+        project.groups.insert(group4.name.to_string(), group4);
+        project.groups.insert(group5.name.to_string(), group5);
 
         commands::init::InitArgs.run(file_name);
 
@@ -153,5 +159,63 @@ mod tests {
         let data = utils::get_data(file_name);
 
         assert_eq!(data, project);
+    }
+
+    #[test]
+    fn simple_select() {
+        let file_name = Some(".simple-select.pmgr");
+        clean(file_name.unwrap());
+
+        commands::init::InitArgs.run(file_name);
+
+        /*
+         * simple structure used in test:
+         *
+         * -group1: (selected in stage 2)
+         *   -
+         * -group2: (selected in stage 2)
+         *   -group3:
+         *     -
+         *   -group4: (selected in stage 1)
+         *     -group5:
+         *       -
+         */
+        commands::create::CreateArgs {
+            group_name: "group1".to_string(),
+            parent_group: None,
+        }.run(file_name);
+        commands::create::CreateArgs {
+            group_name: "group2".to_string(),
+            parent_group: None,
+        }.run(file_name);
+        commands::create::CreateArgs {
+            group_name: "group3".to_string(),
+            parent_group: Some("group2".to_string()),
+        }.run(file_name);
+        commands::create::CreateArgs {
+            group_name: "group4".to_string(),
+            parent_group: Some("group2".to_string()),
+        }.run(file_name);
+        commands::create::CreateArgs {
+            group_name: "group5".to_string(),
+            parent_group: Some("group4".to_string()),
+        }.run(file_name);
+
+        commands::select::SelectArgs {
+            group_names: vec!["group4".to_string()],
+        }.run(file_name);
+
+        let data = utils::get_data(file_name);
+        assert_eq!(data.active_groups, vec!["group4", "group5"]);
+
+        commands::select::SelectArgs {
+            group_names: vec!["group1".to_string()],
+        }.run(file_name);
+        commands::select::SelectArgs {
+            group_names: vec!["group2".to_string()],
+        }.run(file_name);
+
+        let data = utils::get_data(file_name);
+        assert_eq!(data.active_groups, vec!["group1", "group2", "group3", "group4", "group5"]);
     }
 }
