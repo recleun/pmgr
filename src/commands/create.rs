@@ -6,12 +6,28 @@ use clap::Args;
 #[derive(Args)]
 pub struct CreateArgs {
     group_name: String,
+    parent_group: Option<String>,
 }
 
 impl super::Command for CreateArgs {
     fn run(self, file_name: Option<&str>) {
         if let Ok(path) = utils::check_data(file_name) {
             let mut data: Project = utils::get_data(file_name);
+
+            if let Some(_) = data.get_group(self.group_name.as_str()) {
+                eprintln!("A group with the name `{}` already exists", self.group_name);
+                process::exit(-1);
+            }
+
+            if let Some(parent_name) = self.parent_group {
+                match data.get_group(&parent_name) {
+                    Some(parent) => data.groups[parent].groups.push(parent_name),
+                    None => {
+                        eprintln!("Specified parent group was not found");
+                        process::exit(-1);
+                    }
+                };
+            }
             data.groups.push(Group::new(&self.group_name));
 
             let data = serde_json::to_string(&data).expect("Failed to serialize project data");
