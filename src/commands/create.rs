@@ -21,7 +21,7 @@ impl super::Command for CreateArgs {
 
             if let Some(parent_name) = self.parent_group {
                 match data.get_group(&parent_name) {
-                    Some(parent) => data.groups[parent].groups.push(parent_name),
+                    Some(parent) => data.groups[parent].groups.push(self.group_name.clone()),
                     None => {
                         eprintln!("Specified parent group was not found");
                         return;
