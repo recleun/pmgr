@@ -3,6 +3,7 @@ pub mod read;
 pub mod check;
 pub mod init;
 pub mod create;
+pub mod select;
 
 #[derive(Parser)]
 #[command(version, about, long_about = None)]
@@ -22,6 +23,8 @@ pub enum Commands {
     Init(init::InitArgs),
     /// Create a group in the current project
     Create(create::CreateArgs),
+    /// Select a group or a list of groups
+    Select(select::SelectArgs),
 }
 
 pub trait Command {

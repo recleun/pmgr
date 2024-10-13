@@ -2,6 +2,7 @@ use serde::{Serialize, Deserialize};
 
 #[derive(Serialize, Deserialize, Debug, PartialEq)]
 pub struct Project {
+    pub active_groups: Vec<String>,
     pub groups: Vec<Group>,
 }
 
@@ -29,11 +30,25 @@ impl Project {
     pub fn new() -> Self {
         Project {
             groups: vec![],
+            active_groups: vec![],
         }
     }
 
     pub fn get_group(&self, name: &str) -> Option<usize> {
         self.groups.iter().position(|group| group.name == name)
+    }
+
+    pub fn get_group_descendants(&self, group_name: &str) -> Vec<String> {
+        let group = &self.groups[Self::get_group(self, group_name).expect("Group name specified was not found")];
+
+        let mut children: Vec<String> = vec![];
+        for child in &group.groups {
+            let g = &self.groups[Self::get_group(self, child).expect("Group name specified was not found")];
+            children.push(child.to_string());
+            children.append(&mut Self::get_group_descendants(self, &g.name));
+        }
+
+        children
     }
 }
 
