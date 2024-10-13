@@ -2,7 +2,7 @@ use crate::data::Project;
 use super::ExpectWith;
 
 use std::{
-    env, fs::File, io, path::{Path, PathBuf}
+    env, fs::{self, File}, io, path::{Path, PathBuf}
 };
 
 pub fn check_data(file_name: Option<&str>) -> Result<PathBuf, io::Error> {
@@ -35,4 +35,12 @@ pub fn get_data(file_name: Option<&str>) -> Project {
         .expect_with("Failed to read project data");
 
     data
+}
+
+pub fn write_data(file_name: Option<&str>, data: &Project) {
+    let path = check_data(file_name)
+        .expect_with("Failed to open the project file");
+
+    fs::write(path, serde_json::to_string(data).expect("Failed to serialize project data"))
+        .expect("Failed to write project data");
 }
