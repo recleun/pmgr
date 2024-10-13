@@ -1,6 +1,6 @@
 mod functions;
 
-use std::{process, fmt::Debug};
+use std::fmt::Debug;
 pub use functions::*;
 
 pub trait ExpectWith<T, E> {
@@ -12,8 +12,7 @@ impl<T, E: Debug> ExpectWith<T, E> for Result<T, E> {
         match self {
             Ok(v) => v,
             Err(e) => {
-                eprintln!("{}: {:?}", msg, e);
-                process::exit(-1)
+                panic!("{}: {:?}", msg, e);
             }
         }
     }

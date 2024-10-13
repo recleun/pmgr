@@ -16,7 +16,7 @@ impl super::Command for CreateArgs {
 
             if let Some(_) = data.get_group(self.group_name.as_str()) {
                 eprintln!("A group with the name `{}` already exists", self.group_name);
-                process::exit(-1);
+                return;
             }
 
             if let Some(parent_name) = self.parent_group {
@@ -24,7 +24,7 @@ impl super::Command for CreateArgs {
                     Some(parent) => data.groups[parent].groups.push(parent_name),
                     None => {
                         eprintln!("Specified parent group was not found");
-                        process::exit(-1);
+                        return;
                     }
                 };
             }
@@ -36,7 +36,6 @@ impl super::Command for CreateArgs {
             println!("Added group `{}` to project successfully", self.group_name);
         } else {
             eprintln!("Could not find a project in current directory or parents");
-            process::exit(-1);
         }
     }
 }
