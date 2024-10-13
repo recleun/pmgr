@@ -1,6 +1,6 @@
 use crate::utils;
 use crate::data::{Project, Group};
-use std::{fs, process};
+use std::fs;
 use clap::Args;
 
 #[derive(Args)]
