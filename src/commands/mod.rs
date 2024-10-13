@@ -4,6 +4,7 @@ pub mod check;
 pub mod init;
 pub mod create;
 pub mod select;
+pub mod deselect;
 
 #[derive(Parser)]
 #[command(version, about, long_about = None)]
@@ -25,6 +26,8 @@ pub enum Commands {
     Create(create::CreateArgs),
     /// Select a group or a list of groups
     Select(select::SelectArgs),
+    /// Unselect a group or a list of groups
+    Deselect(deselect::DeselectArgs),
 }
 
 pub trait Command {
