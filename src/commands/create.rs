@@ -5,8 +5,8 @@ use clap::Args;
 
 #[derive(Args)]
 pub struct CreateArgs {
-    group_name: String,
-    parent_group: Option<String>,
+    pub group_name: String,
+    pub parent_group: Option<String>,
 }
 
 impl super::Command for CreateArgs {
