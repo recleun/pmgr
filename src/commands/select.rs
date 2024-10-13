@@ -18,7 +18,7 @@ impl super::Command for SelectArgs {
         let mut already_active: Vec<&str> = vec![];
         let mut undefined_groups: Vec<&str> = vec![];
         for group in &self.group_names {
-            if data.groups.iter().find(|g| g.name == *group).is_none() {
+            if !data.groups.contains_key(group) {
                 undefined_groups.push(group);
             } else if data.active_groups.contains(group) {
                 already_active.push(group);
@@ -46,6 +46,8 @@ impl super::Command for SelectArgs {
         }
 
         data.active_groups.append(&mut to_select);
+        data.active_groups.sort();
+        data.active_groups.dedup();
         utils::write_data(file_name, &data);
 
         println!("Selected group(s) successfully: {}", self.group_names.join(", "));
