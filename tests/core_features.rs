@@ -14,9 +14,7 @@ mod tests {
     use super::*;
     use std::{fs, io};
     use pmgr::{
-        commands,
-        utils,
-        Command
+        commands, data::{Group, Project}, utils, Command
     };
 
     #[test]
@@ -59,5 +57,101 @@ mod tests {
             }
         }
         clean(file_name);
+    }
+
+    #[test]
+    fn simple_create() {
+        let file_name = Some(".simple-create.pmgr");
+        clean(file_name.unwrap());
+
+        let mut project = Project::new();
+        project.groups.append(&mut vec![Group::new("group1"), Group::new("group2"), Group::new("group3")]);
+
+        commands::init::InitArgs.run(file_name);
+
+        commands::create::CreateArgs {
+            group_name: "group1".to_string(),
+            parent_group: None,
+        }.run(file_name);
+        commands::create::CreateArgs {
+            group_name: "group2".to_string(),
+            parent_group: None,
+        }.run(file_name);
+        commands::create::CreateArgs {
+            group_name: "group3".to_string(),
+            parent_group: None,
+        }.run(file_name);
+        // expect to not create a group (duplicate group)
+        commands::create::CreateArgs {
+            group_name: "group3".to_string(),
+            parent_group: None,
+        }.run(file_name);
+
+        let data = utils::get_data(file_name);
+
+        assert_eq!(data, project);
+    }
+
+    #[test]
+    fn create_with_parent() {
+        let file_name = Some(".create-with-parent.pmgr");
+        clean(file_name.unwrap());
+
+        /*
+         * simple structure used in test:
+         *
+         * -group1:
+         *   -
+         * -group2:
+         *   -group3:
+         *     -
+         *   -group4:
+         *     -group5:
+         *       -
+         */
+        let mut project = Project::new();
+        let group1 = Group::new("group1");
+        let mut group2 = Group::new("group2");
+        let group3 = Group::new("group3");
+        let mut group4 = Group::new("group4");
+        let group5 = Group::new("group5");
+
+        group2.groups.push("group3".to_string());
+        group2.groups.push("group4".to_string());
+        group4.groups.push("group5".to_string());
+
+        project.groups.append(&mut vec![group1, group2, group3, group4, group5]);
+
+        commands::init::InitArgs.run(file_name);
+
+        commands::create::CreateArgs {
+            group_name: "group1".to_string(),
+            parent_group: None,
+        }.run(file_name);
+        commands::create::CreateArgs {
+            group_name: "group2".to_string(),
+            parent_group: None,
+        }.run(file_name);
+        commands::create::CreateArgs {
+            group_name: "group3".to_string(),
+            parent_group: Some("group2".to_string()),
+        }.run(file_name);
+        commands::create::CreateArgs {
+            group_name: "group4".to_string(),
+            parent_group: Some("group2".to_string()),
+        }.run(file_name);
+        commands::create::CreateArgs {
+            group_name: "group5".to_string(),
+            parent_group: Some("group4".to_string()),
+        }.run(file_name);
+        // expect to not create a group (duplicate group)
+        commands::create::CreateArgs {
+            group_name: "group5".to_string(),
+            parent_group: Some("group1".to_string()),
+        }.run(file_name);
+
+        let data = utils::get_data(file_name);
+
+        assert_eq!(data, project);
     }
 }
