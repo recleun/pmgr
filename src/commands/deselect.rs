@@ -46,13 +46,14 @@ impl super::Command for DeselectArgs {
         } 
 
         while to_deselect.len() > 0 {
-            let index = data.active_groups.iter().position(|g| g == to_deselect[0].as_str())
-                .expect("Group specified to deselect was not found in active groups");
+            println!("to_deselect[0]: {}", to_deselect[0]);
+            if data.active_groups.contains(&to_deselect[0]) {
+                let index = data.active_groups.iter().position(|g| g == to_deselect[0].as_str())
+                    .expect("Group specified to deselect was not found in active groups");
+                data.active_groups.remove(index);
+            }
             to_deselect.remove(0);
-            data.active_groups.remove(index);
         }
-        data.active_groups.sort();
-        data.active_groups.dedup();
         utils::write_data(file_name, &data);
 
         println!("Deselected group(s) successfully: {}", self.group_names.join(", "));
