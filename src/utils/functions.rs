@@ -5,8 +5,6 @@ use std::{
     env, fs::File, io, path::{Path, PathBuf}
 };
 
-pub type Data = serde_json::Map<String, serde_json::Value>;
-
 pub fn check_data(file_name: Option<&str>) -> Result<PathBuf, io::Error> {
     let file_name = file_name.unwrap_or(".pmgr");
     let current_dir = env::current_dir()?;
