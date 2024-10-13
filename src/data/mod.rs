@@ -1,11 +1,11 @@
 use serde::{Serialize, Deserialize};
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
 pub struct Project {
     pub groups: Vec<Group>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
 pub struct Group {
     pub name: String,
     pub notes: Vec<Note>,
@@ -13,14 +13,14 @@ pub struct Group {
     pub groups: Vec<String>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
-struct Note {
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
+pub struct Note {
     pub id: usize,
     pub note: String,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
-struct Task {
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
+pub struct Task {
     pub id: usize,
     pub task: String,
 }
