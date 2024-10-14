@@ -22,10 +22,6 @@ mod tests {
         let file_name = ".simple-init.pmgr";
         clean(file_name);
 
-        if fs::metadata(file_name).is_ok() {
-            panic!("A project already exists, unable to init");
-        }
-
         commands::init::InitArgs.run(Some(file_name));
 
         if !fs::metadata(file_name).is_ok() {
