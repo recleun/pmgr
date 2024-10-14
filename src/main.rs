@@ -11,5 +11,6 @@ fn main() {
         Commands::Create(args) => args.run(None),
         Commands::Select(args) => args.run(None),
         Commands::Deselect(args) => args.run(None),
+        Commands::Add(args) => args.run(None),
     }
 }
