@@ -72,3 +72,11 @@ impl Note {
         }
     }
 }
+
+impl Task {
+    pub fn new(task: &str) -> Self {
+        Task {
+            task: task.to_string(),
+        }
+    }
+}
