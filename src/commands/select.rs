@@ -1,6 +1,6 @@
-use clap::Args;
+use clap::{error::ErrorKind, Args, CommandFactory};
 
-use crate::{data::Project, utils};
+use crate::{data::Project, utils, Cli};
 
 #[derive(Args)]
 pub struct SelectArgs {
@@ -10,7 +10,12 @@ pub struct SelectArgs {
 impl super::Command for SelectArgs {
     fn run(self, file_name: Option<&str>) {
         if self.group_names.len() == 0 {
-            eprintln!("No groups specified to be selected");
+            let _ = Cli::command()
+                .error(
+                    ErrorKind::MissingRequiredArgument,
+                    "No groups specified to be selected",
+                )
+                .print();
             return;
         }
 
@@ -26,15 +31,34 @@ impl super::Command for SelectArgs {
         }
 
         if already_active.len() > 0 && undefined_groups.len() > 0 {
-            eprintln!(
-                "No changes happened, following groups are already active: ({}), following groups are not created: ({})",
-                already_active.join(", "), undefined_groups.join(", "));
+            let _ = Cli::command()
+                .error(
+                    ErrorKind::ValueValidation,
+                    format!("Following groups are already active: {},\nFollowing groups are not created: {}", already_active.join(", "), undefined_groups.join(", ")),
+                )
+                .print();
             return;
         } else if already_active.len() > 0 {
-            eprintln!("No changes happened, following groups are already active: {}", already_active.join(", "));
+            let _ = Cli::command()
+                .error(
+                    ErrorKind::ValueValidation,
+                    format!(
+                        "Following groups are already active: {}",
+                        already_active.join(", ")
+                    ),
+                )
+                .print();
             return;
         } else if undefined_groups.len() > 0 {
-            eprintln!("No changes happened, following groups are not created: {}", undefined_groups.join(", "));
+            let _ = Cli::command()
+                .error(
+                    ErrorKind::ValueValidation,
+                    format!(
+                        "Following groups are not created: {}",
+                        undefined_groups.join(", ")
+                    ),
+                )
+                .print();
             return;
         }
 
@@ -50,6 +74,9 @@ impl super::Command for SelectArgs {
         data.active_groups.dedup();
         utils::write_data(file_name, &data);
 
-        println!("Selected group(s) successfully: {}", self.group_names.join(", "));
+        println!(
+            "Selected group(s) successfully: {}",
+            self.group_names.join(", ")
+        );
     }
 }

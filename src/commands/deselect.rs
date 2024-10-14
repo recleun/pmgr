@@ -1,6 +1,6 @@
-use clap::Args;
+use clap::{error::ErrorKind, Args, CommandFactory};
 
-use crate::{data::Project, utils};
+use crate::{data::Project, utils, Cli};
 
 #[derive(Args)]
 pub struct DeselectArgs {
@@ -10,7 +10,12 @@ pub struct DeselectArgs {
 impl super::Command for DeselectArgs {
     fn run(self, file_name: Option<&str>) {
         if self.group_names.len() == 0 {
-            eprintln!("No groups specified to be deselected");
+            let _ = Cli::command()
+                .error(
+                    ErrorKind::MissingRequiredArgument,
+                    "No groups specified to be deselected",
+                )
+                .print();
             return;
         }
 
@@ -26,15 +31,34 @@ impl super::Command for DeselectArgs {
         }
 
         if unselected_groups.len() > 0 && undefined_groups.len() > 0 {
-            eprintln!(
-                "No changes happened, following groups are not active: ({}), following groups are not created: ({})",
-                unselected_groups.join(", "), undefined_groups.join(", "));
+            let _ = Cli::command()
+                .error(
+                    ErrorKind::ValueValidation,
+                    format!("Following groups are already not active: {},\nFollowing groups are not created: {}", unselected_groups.join(", "), undefined_groups.join(", ")),
+                )
+                .print();
             return;
         } else if unselected_groups.len() > 0 {
-            eprintln!("No changes happened, following groups are not active: {}", unselected_groups.join(", "));
+            let _ = Cli::command()
+                .error(
+                    ErrorKind::ValueValidation,
+                    format!(
+                        "Following groups are already not active: {}",
+                        unselected_groups.join(", ")
+                    ),
+                )
+                .print();
             return;
         } else if undefined_groups.len() > 0 {
-            eprintln!("No changes happened, following groups are not created: {}", undefined_groups.join(", "));
+            let _ = Cli::command()
+                .error(
+                    ErrorKind::ValueValidation,
+                    format!(
+                        "Following groups are not created: {}",
+                        undefined_groups.join(", ")
+                    ),
+                )
+                .print();
             return;
         }
 
@@ -43,12 +67,15 @@ impl super::Command for DeselectArgs {
         for group in &self.group_names {
             to_deselect.push(group.to_string());
             to_deselect.append(&mut data.get_group_descendants(group));
-        } 
+        }
 
         while to_deselect.len() > 0 {
             println!("to_deselect[0]: {}", to_deselect[0]);
             if data.active_groups.contains(&to_deselect[0]) {
-                let index = data.active_groups.iter().position(|g| g == to_deselect[0].as_str())
+                let index = data
+                    .active_groups
+                    .iter()
+                    .position(|g| g == to_deselect[0].as_str())
                     .expect("Group specified to deselect was not found in active groups");
                 data.active_groups.remove(index);
             }
@@ -56,6 +83,9 @@ impl super::Command for DeselectArgs {
         }
         utils::write_data(file_name, &data);
 
-        println!("Deselected group(s) successfully: {}", self.group_names.join(", "));
+        println!(
+            "Deselected group(s) successfully: {}",
+            self.group_names.join(", ")
+        );
     }
 }

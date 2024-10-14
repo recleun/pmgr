@@ -1,5 +1,7 @@
-use clap::Args;
 use crate::utils;
+use clap::{error::ErrorKind, Args, CommandFactory};
+
+use super::Cli;
 
 #[derive(Args)]
 pub struct CheckArgs;
@@ -8,7 +10,15 @@ impl super::Command for CheckArgs {
     fn run(self, file_name: Option<&str>) {
         match utils::check_data(file_name) {
             Ok(path) => println!("Found project at {:?}", path),
-            Err(e) => eprintln!("Could not check for project: {}", e),
+            Err(e) => {
+                let _ = Cli::command()
+                    .error(
+                        ErrorKind::Io,
+                        format!("Failed to check for a project: {}", e),
+                    )
+                    .print();
+                return;
+            }
         }
     }
 }
