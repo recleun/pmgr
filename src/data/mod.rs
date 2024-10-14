@@ -34,9 +34,10 @@ impl Project {
         }
     }
 
-    pub fn get_group(&self, name: &str) -> &Group {
+    pub fn get_group(&self, name: &str) -> Group {
         self.groups.get(name)
             .expect("Specified group was not found")
+            .clone()
     }
 
     pub fn get_group_descendants(&self, group_name: &str) -> Vec<String> {

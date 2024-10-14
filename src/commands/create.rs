@@ -19,15 +19,15 @@ impl super::Command for CreateArgs {
 
         if let Some(parent_name) = self.parent_group {
             if data.groups.contains_key(&parent_name) {
-                let mut parent = data.get_group(&parent_name).clone();
-                parent.groups.push(self.group_name.clone());
+                let mut parent = data.get_group(&parent_name);
+                parent.groups.push(self.group_name.to_string());
                 data.groups.insert(parent_name, parent);
             } else {
                 eprintln!("Specified parent group was not found");
                 return;
             }
         }
-        data.groups.insert(self.group_name.clone(), Group::new(&self.group_name));
+        data.groups.insert(self.group_name.to_string(), Group::new(&self.group_name));
         utils::write_data(file_name, &data);
 
         println!("Added group `{}` to project successfully", self.group_name);
