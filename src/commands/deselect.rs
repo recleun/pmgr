@@ -1,6 +1,6 @@
 use clap::{error::ErrorKind, Args, CommandFactory};
 
-use crate::{data::Project, utils, Cli};
+use crate::{utils, Cli};
 
 #[derive(Args)]
 pub struct DeselectArgs {
@@ -19,7 +19,9 @@ impl super::Command for DeselectArgs {
             return;
         }
 
-        let mut data: Project = utils::get_data(file_name);
+        let Some(mut data) = utils::get_data(file_name) else {
+            return;
+        };
         let mut unselected_groups: Vec<&str> = vec![];
         let mut undefined_groups: Vec<&str> = vec![];
         for group in &self.group_names {

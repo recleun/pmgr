@@ -12,6 +12,7 @@ fn clean(file_name: &str) {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use core::panic;
     use std::{fs, io};
     use pmgr::{
         commands, data::{Group, Project}, utils, Command
@@ -85,7 +86,9 @@ mod tests {
             parent_group: None,
         }.run(file_name);
 
-        let data = utils::get_data(file_name);
+        let Some(data) = utils::get_data(file_name) else {
+            panic!("Failed to get data");
+        };
 
         assert_eq!(data, project);
     }
@@ -152,7 +155,9 @@ mod tests {
             parent_group: Some("group1".to_string()),
         }.run(file_name);
 
-        let data = utils::get_data(file_name);
+        let Some(data) = utils::get_data(file_name) else {
+            panic!("Failed to get data");
+        };
 
         assert_eq!(data, project);
     }
@@ -201,7 +206,9 @@ mod tests {
             group_names: vec!["group4".to_string()],
         }.run(file_name);
 
-        let data = utils::get_data(file_name);
+        let Some(data) = utils::get_data(file_name) else {
+            panic!("Failed to get data");
+        };
         assert_eq!(data.active_groups, vec!["group4", "group5"]);
 
         commands::select::SelectArgs {
@@ -211,7 +218,9 @@ mod tests {
             group_names: vec!["group2".to_string()],
         }.run(file_name);
 
-        let data = utils::get_data(file_name);
+        let Some(data) = utils::get_data(file_name) else {
+            panic!("Failed to get data");
+        };
         assert_eq!(data.active_groups, vec!["group1", "group2", "group3", "group4", "group5"]);
     }
 
@@ -263,14 +272,18 @@ mod tests {
             group_names: vec!["group5".to_string()],
         }.run(file_name);
 
-        let data = utils::get_data(file_name);
+        let Some(data) = utils::get_data(file_name) else {
+            panic!("Failed to get data");
+        };
         assert_eq!(data.active_groups, vec!["group2", "group3", "group4"]);
 
         commands::deselect::DeselectArgs {
             group_names: vec!["group2".to_string()],
         }.run(file_name);
 
-        let data = utils::get_data(file_name);
+        let Some(data) = utils::get_data(file_name) else {
+            panic!("Failed to get data");
+        };
         assert_eq!(data.active_groups.len(), 0);
     }
 }

@@ -1,4 +1,4 @@
-use crate::data::{Note, Project, Task};
+use crate::data::{Note, Task};
 use crate::{utils, Cli};
 use clap::error::ErrorKind;
 use clap::{Args, CommandFactory, ValueEnum};
@@ -20,7 +20,9 @@ pub enum Data {
 
 impl super::Command for AddArgs {
     fn run(self, file_name: Option<&str>) {
-        let mut data: Project = utils::get_data(file_name);
+        let Some(mut data) = utils::get_data(file_name) else {
+            return;
+        };
 
         if !data.groups.contains_key(&self.group_name) {
             let _ = Cli::command()
