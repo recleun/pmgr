@@ -3,8 +3,8 @@ pub mod read;
 pub mod check;
 pub mod init;
 pub mod create;
-pub mod select;
-pub mod deselect;
+pub mod watch;
+pub mod unwatch;
 pub mod add;
 
 #[derive(Parser)]
@@ -26,9 +26,9 @@ pub enum Commands {
     /// Create a group in the current project
     Create(create::CreateArgs),
     /// Select a group or a list of groups
-    Select(select::SelectArgs),
+    Watch(watch::WatchArgs),
     /// Unselect a group or a list of groups
-    Deselect(deselect::DeselectArgs),
+    Unwatch(unwatch::UnwatchArgs),
     /// Add some data to a group
     Add(add::AddArgs),
 }

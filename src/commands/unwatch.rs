@@ -3,17 +3,17 @@ use clap::{error::ErrorKind, Args, CommandFactory};
 use crate::{utils, Cli};
 
 #[derive(Args)]
-pub struct SelectArgs {
+pub struct UnwatchArgs {
     pub group_names: Vec<String>,
 }
 
-impl super::Command for SelectArgs {
+impl super::Command for UnwatchArgs {
     fn run(self, file_name: Option<&str>) {
         if self.group_names.len() == 0 {
             let _ = Cli::command()
                 .error(
                     ErrorKind::MissingRequiredArgument,
-                    "No groups specified to be selected",
+                    "No groups specified to unwatch",
                 )
                 .print();
             return;
@@ -22,31 +22,31 @@ impl super::Command for SelectArgs {
         let Some(mut data) = utils::get_data(file_name) else {
             return;
         };
-        let mut already_active: Vec<&str> = vec![];
+        let mut unwatched_groups: Vec<&str> = vec![];
         let mut undefined_groups: Vec<&str> = vec![];
         for group in &self.group_names {
             if !data.groups.contains_key(group) {
                 undefined_groups.push(group);
-            } else if data.active_groups.contains(group) {
-                already_active.push(group);
+            } else if !data.active_groups.contains(group) {
+                unwatched_groups.push(group);
             }
         }
 
-        if already_active.len() > 0 && undefined_groups.len() > 0 {
+        if unwatched_groups.len() > 0 && undefined_groups.len() > 0 {
             let _ = Cli::command()
                 .error(
                     ErrorKind::ValueValidation,
-                    format!("Following groups are already active: {},\nFollowing groups are not created: {}", already_active.join(", "), undefined_groups.join(", ")),
+                    format!("Following groups are already not watched: {},\nFollowing groups are not created: {}", unwatched_groups.join(", "), undefined_groups.join(", ")),
                 )
                 .print();
             return;
-        } else if already_active.len() > 0 {
+        } else if unwatched_groups.len() > 0 {
             let _ = Cli::command()
                 .error(
                     ErrorKind::ValueValidation,
                     format!(
-                        "Following groups are already active: {}",
-                        already_active.join(", ")
+                        "Following groups are already not watched: {}",
+                        unwatched_groups.join(", ")
                     ),
                 )
                 .print();
@@ -64,20 +64,29 @@ impl super::Command for SelectArgs {
             return;
         }
 
-        let mut to_select: Vec<String> = vec![];
+        let mut to_unwatch: Vec<String> = vec![];
 
         for group in &self.group_names {
-            to_select.push(group.to_string());
-            to_select.append(&mut data.get_group_descendants(group));
+            to_unwatch.push(group.to_string());
+            to_unwatch.append(&mut data.get_group_descendants(group));
         }
 
-        data.active_groups.append(&mut to_select);
-        data.active_groups.sort();
-        data.active_groups.dedup();
+        while to_unwatch.len() > 0 {
+            println!("to_deselect[0]: {}", to_unwatch[0]);
+            if data.active_groups.contains(&to_unwatch[0]) {
+                let index = data
+                    .active_groups
+                    .iter()
+                    .position(|g| g == to_unwatch[0].as_str())
+                    .expect("Group specified to be unwatched was not found in watched groups");
+                data.active_groups.remove(index);
+            }
+            to_unwatch.remove(0);
+        }
         utils::write_data(file_name, &data);
 
         println!(
-            "Selected group(s) successfully: {}",
+            "Unwatched group(s) successfully: {}",
             self.group_names.join(", ")
         );
     }

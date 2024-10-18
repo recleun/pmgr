@@ -9,8 +9,8 @@ fn main() {
         Commands::Read(args) => args.run(None),
         Commands::Init(args) => args.run(None),
         Commands::Create(args) => args.run(None),
-        Commands::Select(args) => args.run(None),
-        Commands::Deselect(args) => args.run(None),
+        Commands::Watch(args) => args.run(None),
+        Commands::Unwatch(args) => args.run(None),
         Commands::Add(args) => args.run(None),
     }
 }

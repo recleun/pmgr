@@ -202,7 +202,7 @@ mod tests {
             parent_group: Some("group4".to_string()),
         }.run(file_name);
 
-        commands::select::SelectArgs {
+        commands::watch::WatchArgs {
             group_names: vec!["group4".to_string()],
         }.run(file_name);
 
@@ -211,10 +211,10 @@ mod tests {
         };
         assert_eq!(data.active_groups, vec!["group4", "group5"]);
 
-        commands::select::SelectArgs {
+        commands::watch::WatchArgs {
             group_names: vec!["group1".to_string()],
         }.run(file_name);
-        commands::select::SelectArgs {
+        commands::watch::WatchArgs {
             group_names: vec!["group2".to_string()],
         }.run(file_name);
 
@@ -264,11 +264,11 @@ mod tests {
             parent_group: Some("group4".to_string()),
         }.run(file_name);
 
-        commands::select::SelectArgs {
+        commands::watch::WatchArgs {
             group_names: vec!["group2".to_string()],
         }.run(file_name);
 
-        commands::deselect::DeselectArgs {
+        commands::unwatch::UnwatchArgs {
             group_names: vec!["group5".to_string()],
         }.run(file_name);
 
@@ -277,7 +277,7 @@ mod tests {
         };
         assert_eq!(data.active_groups, vec!["group2", "group3", "group4"]);
 
-        commands::deselect::DeselectArgs {
+        commands::unwatch::UnwatchArgs {
             group_names: vec!["group2".to_string()],
         }.run(file_name);
 
