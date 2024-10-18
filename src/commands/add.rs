@@ -12,9 +12,9 @@ pub struct AddArgs {
 
 #[derive(ValueEnum, Clone)]
 pub enum Data {
-    /// Add a note to a group
+    /// A note that contains text
     Note,
-    /// Add a task to a group
+    /// A task with Done/Not Done states
     Task,
 }
 
