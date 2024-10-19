@@ -9,10 +9,6 @@ pub struct DeleteArgs {
 
 impl super::Command for DeleteArgs {
     fn run(self, file_name: Option<&str>) {
-        // recursively delete groups specified and their children
-        // remove any deleted groups from the active list
-        // remove any deleted groups from parent groups
-
         if self.group_names.len() == 0 {
             let _ = Cli::command()
                 .error(
