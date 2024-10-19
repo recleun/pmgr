@@ -72,7 +72,6 @@ impl super::Command for UnwatchArgs {
         }
 
         while to_unwatch.len() > 0 {
-            println!("to_deselect[0]: {}", to_unwatch[0]);
             if data.active_groups.contains(&to_unwatch[0]) {
                 let index = data
                     .active_groups
