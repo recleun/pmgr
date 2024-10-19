@@ -1,4 +1,4 @@
-use crate::{data::Group, utils, Cli};
+use crate::{data::{Group, TaskState}, utils, Cli};
 use clap::{error::ErrorKind, Args, CommandFactory};
 
 #[derive(Args)]
@@ -63,7 +63,11 @@ impl super::Command for ListArgs {
                 let mut task_count = 0;
                 for task in &group.tasks {
                     task_count += 1;
-                    println!("    {} - [ ] {}", task_count, task.task);
+                    let task_state = match task.state {
+                        TaskState::Complete => "x",
+                        TaskState::Incomplete => " ",
+                    };
+                    println!("    {} - [{}] {}", task_count, task_state,  task.task);
                 }
                 println!("");
             }
