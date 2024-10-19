@@ -41,24 +41,27 @@ impl super::Command for AddArgs {
 
         let mut group = data.get_group(&self.group_name).clone();
 
-        let mut was_note = true;
         match self.data_type {
             Data::Note => {
                 group.notes.push(Note::new(&self.text.join(" ")));
             },
             Data::Task => {
                 group.tasks.push(Task::new(&self.text.join(" ")));
-                was_note = false;
             },
         }
 
         data.groups.insert(self.group_name.clone(), group);
         utils::write_data(file_name, &data);
 
-        if was_note {
-            println!("Added note to group `{}` successfully", self.group_name);
-        } else {
-            println!("Added task to group `{}` successfully", self.group_name);
+        match self.data_type {
+            Data::Note => println!(
+                "Added note to group `{}` successfully",
+                self.group_name
+            ),
+            Data::Task => println!(
+                "Added task to group `{}` successfully",
+                self.group_name
+            ),
         }
     }
 }
