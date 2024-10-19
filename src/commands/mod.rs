@@ -6,6 +6,7 @@ pub mod create;
 pub mod watch;
 pub mod unwatch;
 pub mod add;
+pub mod remove;
 
 #[derive(Parser)]
 #[command(version, about, long_about = None)]
@@ -31,6 +32,8 @@ pub enum Commands {
     Unwatch(unwatch::UnwatchArgs),
     /// Add some data to a group
     Add(add::AddArgs),
+    /// Remove some data from a group
+    Remove(remove::RemoveArgs),
 }
 
 pub trait Command {
