@@ -26,9 +26,9 @@ pub enum Commands {
     Init(init::InitArgs),
     /// Create a group in the current project
     Create(create::CreateArgs),
-    /// Select a group or a list of groups
+    /// Watch a group or a list of groups
     Watch(watch::WatchArgs),
-    /// Unselect a group or a list of groups
+    /// Unwatch a group or a list of groups
     Unwatch(unwatch::UnwatchArgs),
     /// Add some data to a group
     Add(add::AddArgs),
