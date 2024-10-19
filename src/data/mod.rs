@@ -24,6 +24,13 @@ pub struct Note {
 #[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
 pub struct Task {
     pub task: String,
+    pub state: TaskState,
+}
+
+#[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
+pub enum TaskState {
+    Complete,
+    Incomplete,
 }
 
 impl Project {
@@ -94,6 +101,7 @@ impl Task {
     pub fn new(task: &str) -> Self {
         Task {
             task: task.to_string(),
+            state: TaskState::Incomplete,
         }
     }
 }
