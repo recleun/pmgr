@@ -47,7 +47,7 @@ impl Project {
         for child in &group.groups {
             let g = self.get_group(child);
             children.push(child.to_string());
-            children.append(&mut Self::get_group_descendants(self, &g.name));
+            children.append(&mut self.get_group_descendants(&g.name));
         }
 
         children
