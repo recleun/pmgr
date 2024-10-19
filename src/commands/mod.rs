@@ -3,6 +3,7 @@ pub mod read;
 pub mod check;
 pub mod init;
 pub mod create;
+pub mod delete;
 pub mod watch;
 pub mod unwatch;
 pub mod add;
@@ -26,6 +27,8 @@ pub enum Commands {
     Init(init::InitArgs),
     /// Create a group in the current project
     Create(create::CreateArgs),
+    /// Delete a group in the current project
+    Delete(delete::DeleteArgs),
     /// Watch a group or a list of groups
     Watch(watch::WatchArgs),
     /// Unwatch a group or a list of groups
