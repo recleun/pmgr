@@ -15,7 +15,19 @@ impl super::Command for ListArgs {
         let mut groups: Vec<Group> = vec![];
 
         if self.group_name.is_some() {
-            let group = data.get_group(&self.group_name.unwrap());
+            let group_name = &self.group_name.unwrap().clone();
+
+            if !data.groups.contains_key(group_name) {
+                let _ = Cli::command()
+                    .error(
+                        ErrorKind::InvalidValue,
+                        format!("No group with name `{}` found", group_name),
+                    )
+                    .print();
+                return;
+            }
+
+            let group = data.get_group(group_name);
             groups.push(group.clone());
             if group.groups.len() > 0 {
                 for g in group.groups {
