@@ -89,8 +89,9 @@ mod tests {
         let Some(data) = utils::get_data(file_name) else {
             panic!("Failed to get data");
         };
-
         assert_eq!(data, project);
+
+        clean(file_name.unwrap());
     }
 
     #[test]
@@ -158,8 +159,9 @@ mod tests {
         let Some(data) = utils::get_data(file_name) else {
             panic!("Failed to get data");
         };
-
         assert_eq!(data, project);
+
+        clean(file_name.unwrap());
     }
 
     #[test]
@@ -222,6 +224,8 @@ mod tests {
             panic!("Failed to get data");
         };
         assert_eq!(data.active_groups, vec!["group1", "group2", "group3", "group4", "group5"]);
+
+        clean(file_name.unwrap());
     }
 
     #[test]
@@ -285,5 +289,7 @@ mod tests {
             panic!("Failed to get data");
         };
         assert_eq!(data.active_groups.len(), 0);
+
+        clean(file_name.unwrap());
     }
 }
