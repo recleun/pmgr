@@ -30,8 +30,9 @@ impl super::Command for ListArgs {
             let group = data.get_group(group_name);
             groups.push(group.clone());
             if group.groups.len() > 0 {
-                for g in group.groups {
-                    groups.push(data.get_group(&g));
+                let descendants = data.get_group_descendants(group_name);
+                for descendant in descendants {
+                    groups.push(data.get_group(&descendant));
                 }
             }
         } else {
