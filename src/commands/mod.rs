@@ -1,5 +1,6 @@
 use clap::{Parser, Subcommand};
 pub mod read;
+pub mod list;
 pub mod check;
 pub mod init;
 pub mod create;
@@ -21,6 +22,8 @@ pub struct Cli {
 pub enum Commands {
     /// Print the project's data
     Read(read::ReadArgs),
+    /// List a group's data or active groups data
+    List(list::ListArgs),
     /// Checks for a project in current and parent directories
     Check(check::CheckArgs),
     /// Initialize a project in the current directory

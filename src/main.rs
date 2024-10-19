@@ -7,6 +7,7 @@ fn main() {
     match cli.command {
         Commands::Check(args) => args.run(None),
         Commands::Read(args) => args.run(None),
+        Commands::List(args) => args.run(None),
         Commands::Init(args) => args.run(None),
         Commands::Create(args) => args.run(None),
         Commands::Delete(args) => args.run(None),
