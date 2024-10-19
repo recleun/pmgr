@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, io::ErrorKind};
 
 use serde::{Serialize, Deserialize};
 
@@ -51,6 +51,23 @@ impl Project {
         }
 
         children
+    }
+
+    pub fn clean(&mut self) {
+        let groups = self.groups.clone();
+
+        for (k, _) in &groups {
+            let g = self.get_group(k);
+            for child in &g.groups {
+                if !self.groups.contains_key(child) {
+                    let index = g.groups.iter().position(|i| i == child).unwrap();
+                    let mut g = g.clone();
+                    g.groups.remove(index);
+                    println!("removing: {}", child);
+                    self.groups.insert(k.to_string(), g);
+                }
+            }
+        }
     }
 }
 
