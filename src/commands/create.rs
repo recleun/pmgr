@@ -34,7 +34,7 @@ impl super::Command for CreateArgs {
                 let _ = Cli::command()
                     .error(
                         ErrorKind::InvalidValue,
-                        format!("Specified parent group `{}` was not found", self.group_name),
+                        format!("Specified parent group `{}` was not found", parent_name),
                     )
                     .print();
                 return;
