@@ -1,5 +1,5 @@
-use clap::Args;
-use crate::{data::Group, utils};
+use crate::{data::Group, utils, Cli};
+use clap::{error::ErrorKind, Args, CommandFactory};
 
 #[derive(Args)]
 pub struct ListArgs {
@@ -23,6 +23,12 @@ impl super::Command for ListArgs {
                 }
             }
         } else {
+            if data.active_groups.len() == 0 {
+                let _ = Cli::command()
+                    .error(ErrorKind::Io, "No groups are being watched")
+                    .print();
+                return;
+            }
             for group in &data.active_groups {
                 groups.push(data.get_group(group));
             }
