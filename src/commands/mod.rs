@@ -40,7 +40,7 @@ pub enum Commands {
     /// Add some data to a group
     Add(add::Add),
     /// Remove some data from a group
-    Remove(remove::RemoveArgs),
+    Remove(remove::Remove),
     /// Do some commands to tasks
     Task(task::TaskArgs),
 }

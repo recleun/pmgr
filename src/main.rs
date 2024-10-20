@@ -24,7 +24,12 @@ fn main() {
                 pmgr::add::AddCommands::Task(args) => args.run(FILE_NAME),
             }
         },
-        Commands::Remove(args) => args.run(FILE_NAME),
+        Commands::Remove(args) => {
+            match args.remove_commands {
+                pmgr::remove::RemoveCommands::Note(args) => args.run(FILE_NAME),
+                pmgr::remove::RemoveCommands::Task(args) => args.run(FILE_NAME),
+            }
+        },
         Commands::Task(args) => args.run(FILE_NAME),
     }
 }
