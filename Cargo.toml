@@ -2,6 +2,7 @@
 name = "pmgr"
 description = "A cli-based project management tool."
 license = "MIT"
+repository = "https://github.com/recleun/pmgr"
 version = "0.1.0"
 edition = "2021"
 
