@@ -1,4 +1,4 @@
-use crate::data::TaskState;
+use crate::data::{Group, Task, TaskState};
 use crate::{utils, Cli};
 use clap::error::ErrorKind;
 use clap::{Args, CommandFactory, ValueEnum};
@@ -16,6 +16,37 @@ pub enum Subcommands {
     Complete,
     /// Set task(s) as incomplete
     Undo,
+    /// View progress of tasks
+    Progress,
+}
+
+fn display_progress(group: Group) {
+    // [########################################] %100
+    // [##############################          ] %70
+    let max_chars = 40;
+    let mut used_chars = 0;
+
+    let finished_tasks: Vec<Task> = group
+        .tasks
+        .clone()
+        .into_iter()
+        .filter(|t| t.state == TaskState::Complete)
+        .collect();
+    let progress_percentage = finished_tasks.len() * 100 / group.tasks.len();
+
+    let mut parsed_progress = String::new();
+
+    while used_chars != max_chars {
+        if (used_chars * 100 / max_chars) >= progress_percentage {
+            parsed_progress.push(' ');
+        } else {
+            parsed_progress.push('#');
+        }
+        used_chars += 1;
+    }
+
+    println!("\n[{}]", group.name);
+    println!("[{}] %{}", parsed_progress, progress_percentage);
 }
 
 impl super::Command for TaskArgs {
@@ -32,14 +63,26 @@ impl super::Command for TaskArgs {
                 )
                 .print();
             return;
-        } else if self.ids.len() == 0 {
+        } else if self.ids.len() == 0 && !matches!(self.subcommand, Subcommands::Progress) {
             let _ = Cli::command()
-                .error(ErrorKind::MissingRequiredArgument, "No task ID was specified")
+                .error(
+                    ErrorKind::MissingRequiredArgument,
+                    "No task ID was specified",
+                )
                 .print();
             return;
         }
 
         let mut group = data.get_group(&self.group_name).clone();
+
+        if matches!(self.subcommand, Subcommands::Progress) {
+            let groups = data.get_group_descendants(&self.group_name);
+            display_progress(group);
+            for g in &groups {
+                display_progress(data.get_group(g));
+            }
+            return;
+        }
 
         let mut invalid_ids: Vec<String> = vec![];
 
@@ -65,14 +108,15 @@ impl super::Command for TaskArgs {
         match self.subcommand {
             Subcommands::Complete => {
                 for id in &self.ids {
-                    group.tasks[id-1].state = TaskState::Complete;
+                    group.tasks[id - 1].state = TaskState::Complete;
                 }
-            },
+            }
             Subcommands::Undo => {
                 for id in &self.ids {
-                    group.tasks[id-1].state = TaskState::Incomplete;
+                    group.tasks[id - 1].state = TaskState::Incomplete;
                 }
-            },
+            }
+            _ => (),
         }
 
         data.groups.insert(self.group_name.clone(), group);
@@ -83,11 +127,18 @@ impl super::Command for TaskArgs {
 
         match self.subcommand {
             Subcommands::Complete => {
-                println!("Successfully set following tasks for group `{}` as complete: {}", self.group_name, formatted_ids);
+                println!(
+                    "Successfully set following tasks for group `{}` as complete: {}",
+                    self.group_name, formatted_ids
+                );
             }
             Subcommands::Undo => {
-                println!("Successfully set following tasks for group `{}` as incomplete: {}", self.group_name, formatted_ids);
+                println!(
+                    "Successfully set following tasks for group `{}` as incomplete: {}",
+                    self.group_name, formatted_ids
+                );
             }
+            _ => (),
         }
     }
 }
