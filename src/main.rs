@@ -15,5 +15,6 @@ fn main() {
         Commands::Unwatch(args) => args.run(None),
         Commands::Add(args) => args.run(None),
         Commands::Remove(args) => args.run(None),
+        Commands::Task(args) => args.run(None),
     }
 }
