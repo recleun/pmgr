@@ -38,7 +38,7 @@ pub enum Commands {
     /// Unwatch a group or a list of groups
     Unwatch(unwatch::UnwatchArgs),
     /// Add some data to a group
-    Add(add::AddArgs),
+    Add(add::Add),
     /// Remove some data from a group
     Remove(remove::RemoveArgs),
     /// Do some commands to tasks

@@ -18,7 +18,12 @@ fn main() {
         Commands::Delete(args) => args.run(FILE_NAME),
         Commands::Watch(args) => args.run(FILE_NAME),
         Commands::Unwatch(args) => args.run(FILE_NAME),
-        Commands::Add(args) => args.run(FILE_NAME),
+        Commands::Add(args) => {
+            match args.add_commands {
+                pmgr::add::AddCommands::Note(args) => args.run(FILE_NAME),
+                pmgr::add::AddCommands::Task(args) => args.run(FILE_NAME),
+            }
+        },
         Commands::Remove(args) => args.run(FILE_NAME),
         Commands::Task(args) => args.run(FILE_NAME),
     }
