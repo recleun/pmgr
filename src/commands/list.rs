@@ -3,7 +3,9 @@ use clap::{error::ErrorKind, Args, CommandFactory};
 
 #[derive(Args)]
 pub struct ListArgs {
+    /// The group name that you want to list the data of
     group_name: Option<String>,
+    /// Use this flag to list all groups in the project (ignores GROUP_NAME)
     #[arg(short, long)]
     all: bool,
 }

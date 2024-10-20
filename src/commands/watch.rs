@@ -4,6 +4,7 @@ use crate::{utils, Cli};
 
 #[derive(Args)]
 pub struct WatchArgs {
+    /// The name(s) of the group(s) that you want to watch
     pub group_names: Vec<String>,
 }
 

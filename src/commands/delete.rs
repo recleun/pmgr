@@ -4,6 +4,7 @@ use crate::{utils, Cli};
 
 #[derive(Args)]
 pub struct DeleteArgs {
+    /// The name of the group that you want to delete
     pub group_names: Vec<String>,
 }
 

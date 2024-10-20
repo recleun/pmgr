@@ -21,7 +21,7 @@ pub struct Cli {
 
 #[derive(Subcommand)]
 pub enum Commands {
-    /// Print the project's data
+    /// Print the project's JSON data
     Read(read::ReadArgs),
     /// List a group's data or active groups data
     List(list::ListArgs),
