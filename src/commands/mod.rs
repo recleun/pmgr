@@ -46,5 +46,5 @@ pub enum Commands {
 }
 
 pub trait Command {
-    fn run(self, file_name: Option<&str>);
+    fn run(self, file_name: &str);
 }

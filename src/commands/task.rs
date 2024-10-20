@@ -19,7 +19,7 @@ pub enum Subcommands {
 }
 
 impl super::Command for TaskArgs {
-    fn run(self, file_name: Option<&str>) {
+    fn run(self, file_name: &str) {
         let Some(mut data) = utils::get_data(file_name) else {
             return;
         };

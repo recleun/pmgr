@@ -8,7 +8,7 @@ pub struct WatchArgs {
 }
 
 impl super::Command for WatchArgs {
-    fn run(self, file_name: Option<&str>) {
+    fn run(self, file_name: &str) {
         if self.group_names.len() == 0 {
             let _ = Cli::command()
                 .error(

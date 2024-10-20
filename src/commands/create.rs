@@ -10,7 +10,7 @@ pub struct CreateArgs {
 }
 
 impl super::Command for CreateArgs {
-    fn run(self, file_name: Option<&str>) {
+    fn run(self, file_name: &str) {
         let Some(mut data) = utils::get_data(file_name) else {
             return;
         };

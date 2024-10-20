@@ -23,7 +23,7 @@ mod tests {
         let file_name = ".simple-init.pmgr";
         clean(file_name);
 
-        commands::init::InitArgs.run(Some(file_name));
+        commands::init::InitArgs.run(file_name);
 
         if !fs::metadata(file_name).is_ok() {
             panic!("Project was not initalized");
@@ -37,15 +37,15 @@ mod tests {
         clean(file_name);
 
         // data doesn't exist for this check
-        match utils::check_data(Some(file_name)) {
+        match utils::check_data(file_name) {
             Ok(data) => panic!("Data shouldn't exist, exists at: {:?}", data),
             Err(_) => (),
         }
 
-        commands::init::InitArgs.run(Some(file_name));
+        commands::init::InitArgs.run(file_name);
 
         // data exists for this check
-        match utils::check_data(Some(file_name)) {
+        match utils::check_data(file_name) {
             Ok(_) => (),
             Err(e) => {
                 if e.kind() != io::ErrorKind::NotFound {
@@ -58,8 +58,8 @@ mod tests {
 
     #[test]
     fn simple_create() {
-        let file_name = Some(".simple-create.pmgr");
-        clean(file_name.unwrap());
+        let file_name = ".simple-create.pmgr";
+        clean(file_name);
 
         let mut project = Project::new();
         project.groups.insert("group1".to_string(), Group::new("group1"));
@@ -91,13 +91,13 @@ mod tests {
         };
         assert_eq!(data, project);
 
-        clean(file_name.unwrap());
+        clean(file_name);
     }
 
     #[test]
     fn create_with_parent() {
-        let file_name = Some(".create-with-parent.pmgr");
-        clean(file_name.unwrap());
+        let file_name = ".create-with-parent.pmgr";
+        clean(file_name);
 
         /*
          * simple structure used in test:
@@ -161,13 +161,13 @@ mod tests {
         };
         assert_eq!(data, project);
 
-        clean(file_name.unwrap());
+        clean(file_name);
     }
 
     #[test]
     fn simple_select() {
-        let file_name = Some(".simple-select.pmgr");
-        clean(file_name.unwrap());
+        let file_name = ".simple-select.pmgr";
+        clean(file_name);
 
         commands::init::InitArgs.run(file_name);
 
@@ -225,13 +225,13 @@ mod tests {
         };
         assert_eq!(data.active_groups, vec!["group1", "group2", "group3", "group4", "group5"]);
 
-        clean(file_name.unwrap());
+        clean(file_name);
     }
 
     #[test]
     fn simple_deselect() {
-        let file_name = Some(".simple-deselect.pmgr");
-        clean(file_name.unwrap());
+        let file_name = ".simple-deselect.pmgr";
+        clean(file_name);
 
         commands::init::InitArgs.run(file_name);
 
@@ -290,6 +290,6 @@ mod tests {
         };
         assert_eq!(data.active_groups.len(), 0);
 
-        clean(file_name.unwrap());
+        clean(file_name);
     }
 }

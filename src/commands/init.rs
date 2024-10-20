@@ -10,9 +10,8 @@ use super::Cli;
 pub struct InitArgs;
 
 impl super::Command for InitArgs {
-    fn run(self, file_name: Option<&str>) {
-        let file_name = file_name.unwrap_or(".pmgr");
-        let result = utils::check_data(Some(file_name));
+    fn run(self, file_name: &str) {
+        let result = utils::check_data(file_name);
         if let Ok(path) = result {
             let _ = Cli::command()
                 .error(

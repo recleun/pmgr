@@ -18,7 +18,7 @@ pub enum Data {
 }
 
 impl super::Command for RemoveArgs {
-    fn run(self, file_name: Option<&str>) {
+    fn run(self, file_name: &str) {
         let Some(mut data) = utils::get_data(file_name) else {
             return;
         };

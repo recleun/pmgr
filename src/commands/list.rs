@@ -7,7 +7,7 @@ pub struct ListArgs {
 }
 
 impl super::Command for ListArgs {
-    fn run(self, file_name: Option<&str>) {
+    fn run(self, file_name: &str) {
         let Some(data) = utils::get_data(file_name) else {
             return;
         };
