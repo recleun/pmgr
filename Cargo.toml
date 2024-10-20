@@ -1,8 +1,11 @@
 [package]
 name = "pmgr"
 description = "A cli-based project management tool."
-license = "MIT"
+license-file = "LICENSE"
+readme = "README.md"
 repository = "https://github.com/recleun/pmgr"
+keywords = ["project-management", "cli"]
+categories = ["command-line-utilities"]
 version = "0.1.0"
 edition = "2021"
 
