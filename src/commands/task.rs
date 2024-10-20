@@ -73,21 +73,39 @@ fn display_progress(group: Group) {
         .into_iter()
         .filter(|t| t.state == TaskState::Complete)
         .collect();
+
+    let unfinished_tasks: Vec<data::Task> = group
+        .tasks
+        .clone()
+        .into_iter()
+        .filter(|t| t.state == TaskState::Incomplete)
+        .collect();
+
     let progress_percentage = finished_tasks.len() * 100 / group.tasks.len();
 
     let mut parsed_progress = String::new();
 
     while used_chars != max_chars {
-        if (used_chars * 100 / max_chars) >= progress_percentage {
+        if used_chars * 100 / max_chars >= progress_percentage {
             parsed_progress.push(' ');
         } else {
-            parsed_progress.push('#');
+            parsed_progress.push('=');
+            if (used_chars + 1) * 100 / max_chars >= progress_percentage && used_chars + 1 != max_chars {
+                parsed_progress.push('>');
+            }
         }
         used_chars += 1;
     }
 
     println!("\n[{}]", group.name);
-    println!("[{}] %{}", parsed_progress, progress_percentage);
+    println!("[{}] %{}\n", parsed_progress, progress_percentage);
+
+    for task in unfinished_tasks {
+        println!("  [ ] {}", task.task);
+    }
+    for task in finished_tasks {
+        println!("  [x] {}", task.task);
+    }
 }
 
 impl super::Command for TaskCompleteArgs {
