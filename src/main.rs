@@ -30,6 +30,12 @@ fn main() {
                 pmgr::remove::RemoveCommands::Task(args) => args.run(FILE_NAME),
             }
         },
-        Commands::Task(args) => args.run(FILE_NAME),
+        Commands::Task(args) => {
+            match args.task_commands {
+                pmgr::task::TaskCommands::Complete(args) => args.run(FILE_NAME),
+                pmgr::task::TaskCommands::Undo(args) => args.run(FILE_NAME),
+                pmgr::task::TaskCommands::Progress(args) => args.run(FILE_NAME),
+            }
+        },
     }
 }

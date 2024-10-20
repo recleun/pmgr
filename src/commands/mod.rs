@@ -42,7 +42,7 @@ pub enum Commands {
     /// Remove some data from a group
     Remove(remove::Remove),
     /// Do some commands to tasks
-    Task(task::TaskArgs),
+    Task(task::Task),
 }
 
 pub trait Command {
