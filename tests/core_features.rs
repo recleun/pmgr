@@ -1,70 +1,5 @@
 use std::fs;
 
-/// Creates a list of groups for a test
-/// ```rs
-/// create_groups(
-///     file_name,
-///     // group1 will be created
-///     "group1" -> []
-///     // group2 will be created with group3 and group4 as subgroups
-///     "group2" -> ["group3", "group4"]
-///     // group4 will be created with group5 as a subgroup
-///     "group4" -> ["group5"]
-/// );
-/// ```
-macro_rules! create_groups {
-    (
-        $file_name:ident,
-        $($group:literal -> [$($subgroup:literal$(,)?)*],)*
-    ) => {
-        $(
-            commands::create::CreateArgs {
-                group_name: $group.to_string(),
-                parent_group: None,
-            }.run($file_name);
-            $(
-                commands::create::CreateArgs {
-                    group_name: $subgroup.to_string(),
-                    parent_group: Some($group.to_string()),
-                }.run($file_name);
-            )*
-        )*
-    };
-}
-
-/// Inserts a list of groups into a project
-/// ```rs
-/// // Insert group objects
-/// insert_groups!(project, group1, group2, group3);
-///
-/// // Or create them on demand
-/// insert_groups!(project, "group1", "group2", "group3");
-/// ```
-macro_rules! insert_groups {
-    (
-        $project:ident, $($group:ident$(,)?)*
-    ) => {
-        $($project.groups.insert($group.name.to_string(), $group);)*
-    };
-    (
-        $project:ident, $($group:literal$(,)?)*
-    ) => {
-        $($project.groups.insert($group.to_string(), Group::new($group));)*
-    };
-}
-
-/// Push a list of groups into a group
-/// ```rs
-/// push_groups!(group, "subgroup1", "subgroup2");
-/// ```
-macro_rules! push_groups {
-    (
-        $group:ident, $($subgroup:literal$(,)?)*
-    ) =>{
-        $($group.groups.push($subgroup.to_string());)*
-    };
-}
-
 /// Set watch status for a list of groups
 /// ```rs
 /// // To watch:
@@ -89,6 +24,149 @@ macro_rules! watch_groups {
     };
 }
 
+macro_rules! generate_ending_check1 {
+    ($file_name: ident, $_: expr) => {
+        if !fs::metadata($file_name).is_ok() {
+            panic!("Project was not initalized");
+        }
+    };
+}
+macro_rules! generate_ending_check2 {
+    ($file_name: ident, $project: expr) => {{
+        let Some(data) = utils::get_data($file_name) else {
+            panic!("Failed to get data");
+        };
+        assert_eq!(data, $project);
+    }};
+}
+macro_rules! generate_ending_check3 {
+    ($file_name: ident, $_: expr) => {{
+        if let Err(e) = utils::check_data($file_name) {
+            if e.kind() != io::ErrorKind::NotFound {
+                panic!("{}", e);
+            }
+        }
+    }};
+}
+macro_rules! generate_ending_check_with_watch {
+    (
+        $file_name: ident,
+        $_: expr,
+        {
+           $( [ $($name: literal),* $(,)? ] -> $value: literal $(=> [ $($match: literal),* $(,)?] )? ),* $(,)?
+        }
+    ) => {{
+        $(
+            if $value {
+                watch_groups!($file_name, true $(, $name)*);
+            } else  {
+                watch_groups!($file_name, false $(, $name)*);
+            }
+            $(
+                let Some(data) = utils::get_data($file_name) else {
+                    panic!("Failed to get data");
+                };
+                let matches: Vec<&str> = vec![$($match,)*];
+                assert_eq!(data.active_groups, matches);
+            )?
+        )*
+    }};
+}
+
+macro_rules! __generate_test {
+    (
+        $file_name_variable: ident = $file_name: literal,
+        $project: ident
+        $(, $extra_block: block)?
+        $(, $generate_extra_block_after: ident)?
+        {
+            $( $group: ident -> [
+                $( $subgroup: ident$(,)?)*
+            ], )*
+        }
+        $(, $ending_check: block)?
+    ) => {
+        let $file_name_variable = $file_name;
+        clean($file_name_variable);
+
+        // just here
+        #[allow(unused_mut, unused_variables)]
+        let mut $project = Project::new();
+        $( $project.groups.insert(stringify!($group).to_string(), Group::new(stringify!($group))); )*
+        $($extra_block)?
+
+        commands::init::InitArgs.run($file_name_variable);
+
+        $( $generate_extra_block_after!($file_name_variable); )?
+
+        $(
+            commands::create::CreateArgs {
+                group_name: stringify!($group).to_string(),
+                parent_group: None,
+            }.run($file_name_variable);
+            $(
+                commands::create::CreateArgs {
+                    group_name: stringify!($subgroup).to_string(),
+                    parent_group: Some(stringify!($group).to_string()),
+                }.run($file_name_variable);
+            )*
+        )*
+
+        $( $ending_check )?
+        clean($file_name_variable);
+    };
+}
+
+macro_rules! generate_test {
+    (
+        $file_name: literal => {
+            $( $group: ident -> [
+                $( $subgroup: ident$(,)?)*
+            ], )*
+        }
+        $(, $extra_block: block )?
+        $(, $generate_ending_check: ident )?
+    ) => {
+        __generate_test!(
+            file_name_variable = $file_name,
+            project
+            $(, $extra_block )?
+            {
+                $( $group -> [$( $subgroup, )*], )*
+            },
+            { $( $generate_ending_check!(file_name_variable, project) )? }
+        )
+    };
+    (
+        $file_name: literal => {
+            $( $group: ident -> [
+                $( $subgroup: ident$(,)?)*
+            ], )*
+        }
+        $(, $extra_block: block )?
+        $( ($file_name_variable: ident, $project: ident) => $body: block )?
+    ) => {
+        __generate_test!(
+            file_name_variable = $file_name,
+            project
+            $(, $extra_block )?
+            {
+                $( $group -> [$( $subgroup, )*], )*
+            },
+            {
+                $(
+                    // to avoid annoying warnings.
+                    #[allow(unused_variables)]
+                    let $file_name_variable = file_name_variable;
+                    #[allow(unused_variables)]
+                    let $project = project;
+                    $body;
+                )?
+            }
+        )
+    };
+}
+
 fn clean(file_name: &str) {
     let file = fs::metadata(file_name).is_ok();
     if file {
@@ -102,207 +180,98 @@ fn clean(file_name: &str) {
 mod tests {
     use super::*;
     use core::panic;
-    use std::{fs, io};
     use pmgr::{
-        commands, data::{Group, Project}, utils, Command
+        commands,
+        data::{Group, Project},
+        utils, Command,
     };
+    use std::{fs, io};
 
     #[test]
     fn simple_init() {
-        let file_name = ".simple-init.pmgr";
-        clean(file_name);
-
-        commands::init::InitArgs.run(file_name);
-
-        if !fs::metadata(file_name).is_ok() {
-            panic!("Project was not initalized");
-        }
-        clean(file_name);
+        generate_test!(".simple-init.pmgr" => {}, generate_ending_check1);
     }
 
     #[test]
     fn simple_check() {
         let file_name = ".simple-check.pmgr";
-        clean(file_name);
-
-        // data doesn't exist for this check
-        match utils::check_data(file_name) {
-            Ok(data) => panic!("Data shouldn't exist, exists at: {:?}", data),
-            Err(_) => (),
-        }
-
-        commands::init::InitArgs.run(file_name);
-
-        // data exists for this check
-        match utils::check_data(file_name) {
-            Ok(_) => (),
-            Err(e) => {
-                if e.kind() != io::ErrorKind::NotFound {
-                    panic!("{}", e);
+        generate_test!(
+            ".simple-check.pmgr" => {},
+            {
+                if let Ok(data) = utils::check_data(file_name) {
+                    panic!("Data shouldn't exist, exists at: {:?}", data)
                 }
-            }
-        }
-        clean(file_name);
+            },
+            generate_ending_check3
+        );
     }
 
     #[test]
     fn simple_create() {
-        let file_name = ".simple-create.pmgr";
-        clean(file_name);
-
-        let mut project = Project::new();
-
-        insert_groups!(project, "group1", "group2", "group3");
-
-        commands::init::InitArgs.run(file_name);
-
-        create_groups!(
-            file_name,
-            "group1" -> [],
-            "group2" -> [],
-            "group3" -> [],
-            // should not create duplicates
-            "group3" -> [],
+        generate_test!(
+            ".simple-create.pmgr" => {
+                group1 -> [],
+                group2 -> [],
+                group3 -> [],
+                group3 -> [],
+            },
+            generate_ending_check2
         );
-
-        let Some(data) = utils::get_data(file_name) else {
-            panic!("Failed to get data");
-        };
-        assert_eq!(data, project);
-
-        clean(file_name);
     }
 
     #[test]
-    fn create_with_parent() {
-        let file_name = ".create-with-parent.pmgr";
-        clean(file_name);
-
-        /*
-         * simple structure used in test:
-         *
-         * -group1:
-         *   -
-         * -group2:
-         *   -group3:
-         *     -
-         *   -group4:
-         *     -group5:
-         *       -
-         */
-        let mut project = Project::new();
-        let group1 = Group::new("group1");
-        let mut group2 = Group::new("group2");
-        let group3 = Group::new("group3");
-        let mut group4 = Group::new("group4");
-        let group5 = Group::new("group5");
-
-        push_groups!(group2, "group3", "group4");
-        push_groups!(group4, "group5");
-
-        insert_groups!(project, group1, group2, group3, group4, group5);
-
-        commands::init::InitArgs.run(file_name);
-
-        create_groups!(
-            file_name,
-            "group1" -> [],
-            "group2" -> ["group3", "group4"],
-            "group4" -> ["group5"],
+    fn create_with_parent_2() {
+        generate_test!(
+            ".create-with-parent.pmgr" => {
+                group1 -> [],
+                group2 -> [],
+                group3 -> [],
+                group3 -> [],
+            },
+            generate_ending_check2
         );
-
-        let Some(data) = utils::get_data(file_name) else {
-            panic!("Failed to get data");
-        };
-        assert_eq!(data, project);
-
-        clean(file_name);
     }
 
     #[test]
     fn simple_select() {
-        let file_name = ".simple-select.pmgr";
-        clean(file_name);
-
-        commands::init::InitArgs.run(file_name);
-
-        /*
-         * simple structure used in test:
-         *
-         * -group1: (selected in stage 2)
-         *   -
-         * -group2: (selected in stage 2)
-         *   -group3:
-         *     -
-         *   -group4: (selected in stage 1)
-         *     -group5:
-         *       -
-         */
-        create_groups!(
-            file_name,
-            "group1" -> [],
-            "group2" -> ["group3", "group4"],
-            "group4" -> ["group5"],
+        generate_test!(
+            ".simple-select.pmgr" => {
+                group1 -> [],
+                group2 -> [group3, group4],
+                group4 -> [group5],
+            }
+            (file_name, project) => {
+                generate_ending_check_with_watch!(
+                    file_name,
+                    project,
+                    {
+                        ["group4"] -> true => ["group4", "group5"],
+                        ["group1", "group2"] -> true => ["group1", "group2", "group3", "group4", "group5"],
+                    }
+                )
+            }
         );
-
-        watch_groups!(file_name, true, "group4");
-
-        let Some(data) = utils::get_data(file_name) else {
-            panic!("Failed to get data");
-        };
-        assert_eq!(data.active_groups, vec!["group4", "group5"]);
-
-        watch_groups!(file_name, true, "group1", "group2");
-
-        let Some(data) = utils::get_data(file_name) else {
-            panic!("Failed to get data");
-        };
-        assert_eq!(data.active_groups, vec!["group1", "group2", "group3", "group4", "group5"]);
-
-        clean(file_name);
     }
 
     #[test]
     fn simple_deselect() {
-        let file_name = ".simple-deselect.pmgr";
-        clean(file_name);
-
-        commands::init::InitArgs.run(file_name);
-
-        /*
-         * simple structure used in test:
-         *
-         * -group1: (selected in stage 2)
-         *   -
-         * -group2: (selected in stage 2)
-         *   -group3:
-         *     -
-         *   -group4: (selected in stage 1)
-         *     -group5:
-         *       -
-         */
-        create_groups!(
-            file_name,
-            "group1" -> [],
-            "group2" -> ["group3", "group4"],
-            "group4" -> ["group5"],
+        generate_test!(
+            ".simple-deselect.pmgr" => {
+                group1 -> [],
+                group2 -> [group3, group4],
+                group4 -> [group5],
+            }
+            (file_name, project) => {
+                generate_ending_check_with_watch!(
+                    file_name,
+                    project,
+                    {
+                        ["group2"] -> true,
+                        ["group5"] -> false => ["group2", "group3", "group4"],
+                        ["group2"] -> false => [],
+                    }
+                )
+            }
         );
-
-        watch_groups!(file_name, true, "group2");
-        watch_groups!(file_name, false, "group5");
-
-        let Some(data) = utils::get_data(file_name) else {
-            panic!("Failed to get data");
-        };
-        assert_eq!(data.active_groups, vec!["group2", "group3", "group4"]);
-
-        watch_groups!(file_name, false, "group2");
-
-        let Some(data) = utils::get_data(file_name) else {
-            panic!("Failed to get data");
-        };
-        assert_eq!(data.active_groups.len(), 0);
-
-        clean(file_name);
     }
 }
