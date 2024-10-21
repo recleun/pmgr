@@ -4,11 +4,12 @@ use crate::{utils, Cli};
 
 #[derive(Args)]
 pub struct DeleteArgs {
+    /// The name of the group that you want to delete
     pub group_names: Vec<String>,
 }
 
 impl super::Command for DeleteArgs {
-    fn run(self, file_name: Option<&str>) {
+    fn run(self, file_name: &str) {
         if self.group_names.len() == 0 {
             let _ = Cli::command()
                 .error(

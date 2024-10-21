@@ -10,8 +10,7 @@ use std::{
     path::{Path, PathBuf},
 };
 
-pub fn check_data(file_name: Option<&str>) -> Result<PathBuf, io::Error> {
-    let file_name = file_name.unwrap_or(".pmgr");
+pub fn check_data(file_name: &str) -> Result<PathBuf, io::Error> {
     let current_dir = env::current_dir()?;
 
     if let Some(path) = check_data_with_path(&current_dir, file_name) {
@@ -34,7 +33,7 @@ fn check_data_with_path(path: &Path, file_name: &str) -> Option<PathBuf> {
         .and_then(|p| check_data_with_path(p, file_name))
 }
 
-pub fn get_data(file_name: Option<&str>) -> Option<Project> {
+pub fn get_data(file_name: &str) -> Option<Project> {
     let file = check_data(file_name).and_then(File::open);
 
     match file {
@@ -58,7 +57,7 @@ pub fn get_data(file_name: Option<&str>) -> Option<Project> {
     }
 }
 
-pub fn write_data(file_name: Option<&str>, data: &Project) {
+pub fn write_data(file_name: &str, data: &Project) {
     let path = check_data(file_name).expect_with("Failed to open the project file");
 
     fs::write(

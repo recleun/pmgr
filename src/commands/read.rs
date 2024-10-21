@@ -5,7 +5,7 @@ use crate::utils::get_data;
 pub struct ReadArgs;
 
 impl super::Command for ReadArgs {
-    fn run(self, file_name: Option<&str>) {
+    fn run(self, file_name: &str) {
         println!("{:?}", get_data(file_name));
     }
 }

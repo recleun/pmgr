@@ -1,4 +1,6 @@
-use clap::{Parser, Subcommand};
+use std::{fs, io::{self, Write}};
+use clap::{self, Args, CommandFactory, Parser, Subcommand};
+use clap_complete::aot::{generate, Generator, Shell};
 pub mod read;
 pub mod list;
 pub mod check;
@@ -21,7 +23,7 @@ pub struct Cli {
 
 #[derive(Subcommand)]
 pub enum Commands {
-    /// Print the project's data
+    /// Print the project's JSON data
     Read(read::ReadArgs),
     /// List a group's data or active groups data
     List(list::ListArgs),
@@ -38,13 +40,45 @@ pub enum Commands {
     /// Unwatch a group or a list of groups
     Unwatch(unwatch::UnwatchArgs),
     /// Add some data to a group
-    Add(add::AddArgs),
+    Add(add::Add),
     /// Remove some data from a group
-    Remove(remove::RemoveArgs),
+    Remove(remove::Remove),
     /// Do some commands to tasks
-    Task(task::TaskArgs),
+    Task(task::Task),
+    /// Generate shell completions for pmgr
+    ShellCompletions(ShellCompletionArgs),
 }
 
 pub trait Command {
-    fn run(self, file_name: Option<&str>);
+    fn run(self, file_name: &str);
+}
+
+#[derive(Args)]
+pub struct ShellCompletionArgs {
+    shell: Shell,
+    path: Option<String>,
+}
+
+fn print_completions<G: Generator>(gen: G, cmd: &mut clap::Command, out: &mut dyn Write) {
+    generate(gen, cmd, cmd.get_name().to_string(), out);
+}
+
+impl ShellCompletionArgs {
+    pub fn run(self) {
+        let mut cmd = Cli::command();
+
+        println!("Generating shell completions for {}...", self.shell);
+
+        if let Some(path) = self.path {
+            let mut file = fs::OpenOptions::new()
+                .write(true)
+                .create(true)
+                .open(path)
+                .expect("Failed to write completions to file");
+
+            print_completions(self.shell, &mut cmd, &mut file);
+        } else {
+            print_completions(self.shell, &mut cmd, &mut io::stdout());
+        }
+    }
 }

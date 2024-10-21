@@ -4,11 +4,12 @@ use crate::{utils, Cli};
 
 #[derive(Args)]
 pub struct UnwatchArgs {
+    /// The name(s) of the group(s) that you want to unwatch
     pub group_names: Vec<String>,
 }
 
 impl super::Command for UnwatchArgs {
-    fn run(self, file_name: Option<&str>) {
+    fn run(self, file_name: &str) {
         if self.group_names.len() == 0 {
             let _ = Cli::command()
                 .error(

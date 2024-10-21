@@ -7,7 +7,7 @@ use super::Cli;
 pub struct CheckArgs;
 
 impl super::Command for CheckArgs {
-    fn run(self, file_name: Option<&str>) {
+    fn run(self, file_name: &str) {
         match utils::check_data(file_name) {
             Ok(path) => println!("Found project at {:?}", path),
             Err(e) => {

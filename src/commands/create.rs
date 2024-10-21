@@ -5,12 +5,14 @@ use clap::{Args, CommandFactory};
 
 #[derive(Args)]
 pub struct CreateArgs {
+    /// The name of the group that you want to create
     pub group_name: String,
+    /// The name of the parent group (if there is one)
     pub parent_group: Option<String>,
 }
 
 impl super::Command for CreateArgs {
-    fn run(self, file_name: Option<&str>) {
+    fn run(self, file_name: &str) {
         let Some(mut data) = utils::get_data(file_name) else {
             return;
         };
