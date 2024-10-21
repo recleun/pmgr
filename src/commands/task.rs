@@ -1,7 +1,7 @@
 use crate::data::{self, Group, TaskState};
 use crate::{utils, Cli};
 use clap::error::ErrorKind;
-use clap::{Args, CommandFactory, Subcommand, ValueEnum, Parser};
+use clap::{Args, CommandFactory, Parser, Subcommand, ValueEnum};
 
 #[derive(Args)]
 pub struct TaskArgs {
@@ -22,7 +22,7 @@ pub enum Subcommands {
 
 #[derive(Subcommand)]
 pub enum Commands {
-    Task(Task)
+    Task(Task),
 }
 
 #[derive(Parser)]
@@ -38,7 +38,7 @@ pub enum TaskCommands {
     /// Set task(s) as incomplete
     Undo(TaskUndoArgs),
     /// View the progress of a group or watched groups
-    Progress(TaskProgressArgs)
+    Progress(TaskProgressArgs),
 }
 
 #[derive(Args)]
@@ -90,7 +90,9 @@ fn display_progress(group: Group) {
             parsed_progress.push(' ');
         } else {
             parsed_progress.push('=');
-            if (used_chars + 1) * 100 / max_chars >= progress_percentage && used_chars + 1 != max_chars {
+            if (used_chars + 1) * 100 / max_chars >= progress_percentage
+                && used_chars + 1 != max_chars
+            {
                 parsed_progress.push('>');
             }
         }
@@ -113,7 +115,7 @@ impl super::Command for TaskCompleteArgs {
         let Some(mut data) = utils::get_data(file_name) else {
             return;
         };
-        
+
         if !data.groups.contains_key(&self.group_name) {
             let _ = Cli::command()
                 .error(
@@ -176,7 +178,7 @@ impl super::Command for TaskUndoArgs {
         let Some(mut data) = utils::get_data(file_name) else {
             return;
         };
-        
+
         if !data.groups.contains_key(&self.group_name) {
             let _ = Cli::command()
                 .error(
@@ -239,7 +241,7 @@ impl super::Command for TaskProgressArgs {
         let Some(data) = utils::get_data(file_name) else {
             return;
         };
-        
+
         if self.group_name.is_some() {
             let group_name = self.group_name.unwrap();
             let group = data.get_group(&group_name).clone();
@@ -248,10 +250,17 @@ impl super::Command for TaskProgressArgs {
             for g in &groups {
                 display_progress(data.get_group(g));
             }
-        } else {
+        } else if data.active_groups.len() > 0 {
             for g in &data.active_groups {
                 display_progress(data.get_group(g));
             }
+        } else {
+            let _ = Cli::command()
+                .error(
+                    ErrorKind::Io,
+                    "No groups being watched to display the progress for",
+                )
+                .print();
         }
     }
 }
