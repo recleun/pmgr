@@ -19,7 +19,8 @@ macro_rules! watch_groups {
         $file_name:ident, false, $($group:literal$(,)?)*
     ) =>{
         $(commands::unwatch::UnwatchArgs {
-            group_names: vec![$group.to_string()]
+            group_names: vec![$group.to_string()],
+            all: false,
         }.run($file_name);)*
     };
 }
