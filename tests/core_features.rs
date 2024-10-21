@@ -24,6 +24,7 @@ macro_rules! watch_groups {
     };
 }
 
+/// Simply checks whether or not the project is even initalized.
 macro_rules! generate_ending_check1 {
     ($file_name: ident, $_: expr) => {
         if !fs::metadata($file_name).is_ok() {
@@ -31,6 +32,8 @@ macro_rules! generate_ending_check1 {
         }
     };
 }
+
+/// This checks the current saved data to that of "project" (the second passed item).
 macro_rules! generate_ending_check2 {
     ($file_name: ident, $project: expr) => {{
         let Some(data) = utils::get_data($file_name) else {
@@ -39,6 +42,9 @@ macro_rules! generate_ending_check2 {
         assert_eq!(data, $project);
     }};
 }
+
+/// This just checks if the file does _not_ exist, and if not, checks if the error
+/// is [`NotFound`](std::io::ErrorKind::NotFound).
 macro_rules! generate_ending_check3 {
     ($file_name: ident, $_: expr) => {{
         if let Err(e) = utils::check_data($file_name) {
@@ -48,10 +54,22 @@ macro_rules! generate_ending_check3 {
         }
     }};
 }
-macro_rules! generate_ending_check_with_watch {
+
+/// Generates ending checks for watch/unwatch commands.
+///
+/// ```rs
+/// generate_watch_ending_check!(file_name, {
+///     [<groups-to-edit>] -> <watch> => [ <final-groups> ]
+/// })
+/// ```
+///
+/// `<groups-to-edit>` are the groups that you want to either watch or unwatch, and
+/// `<watch>` is a boolean indicating whether to watch or not. The final part is
+/// optional, when present, it'll check the current values of watched tables and make
+/// sure it matches `<final-groups>` (or panics if not).
+macro_rules! generate_watch_ending_check {
     (
         $file_name: ident,
-        $_: expr,
         {
            $( [ $($name: literal),* $(,)? ] -> $value: literal $(=> [ $($match: literal),* $(,)?] )? ),* $(,)?
         }
@@ -73,6 +91,7 @@ macro_rules! generate_ending_check_with_watch {
     }};
 }
 
+/// Internal macro for `generate_test`.
 macro_rules! __generate_test {
     (
         $file_name_variable: ident = $file_name: literal,
@@ -117,6 +136,33 @@ macro_rules! __generate_test {
     };
 }
 
+/// The actual macro to generate tests. The simplest form is:
+///
+/// ```rs
+/// generate_test!(".test.pmgr" => {}, generate_ending_check1)
+/// ```
+///
+/// Which simply creates a new pmgr project and checks whether or not it exists.
+///
+/// The macro has 2 match arms, the first 2 accepted values are the same in both, and
+/// they are:
+/// *  file_name - the file name that the test will be applied on. Should be different
+///    for every test to ensure they don't overlap!
+/// * extra_block - an optional block of code which is ran before
+///   [`Init`](pmgr::commands::init::InitArgs) command is ran.
+///
+/// After those 2, the 3rd value varies, in match arm #1, it's a simple `ident`, which
+/// must be a macro that accepts an `ident` and an `expr`. That macro is called at the
+/// very end of the test, right before the final [`clean`].
+///
+/// FOr match arm #2, the syntax goes like:
+/// ```rs
+/// (file_name, project) => { ... }
+/// ```
+///
+/// Where `file_name` and `project` are an `ident` and an `expr` respectfully. What's
+/// in the body (`{ ... }`) is completely up to you which gives you complete freedom
+/// of what to do inside it.
 macro_rules! generate_test {
     (
         $file_name: literal => {
@@ -241,9 +287,8 @@ mod tests {
                 group4 -> [group5],
             }
             (file_name, project) => {
-                generate_ending_check_with_watch!(
+                generate_watch_ending_check!(
                     file_name,
-                    project,
                     {
                         ["group4"] -> true => ["group4", "group5"],
                         ["group1", "group2"] -> true => ["group1", "group2", "group3", "group4", "group5"],
@@ -262,9 +307,8 @@ mod tests {
                 group4 -> [group5],
             }
             (file_name, project) => {
-                generate_ending_check_with_watch!(
+                generate_watch_ending_check!(
                     file_name,
-                    project,
                     {
                         ["group2"] -> true,
                         ["group5"] -> false => ["group2", "group3", "group4"],
