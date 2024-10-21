@@ -1,5 +1,94 @@
 use std::fs;
 
+/// Creates a list of groups for a test
+/// ```rs
+/// create_groups(
+///     file_name,
+///     // group1 will be created
+///     "group1" -> []
+///     // group2 will be created with group3 and group4 as subgroups
+///     "group2" -> ["group3", "group4"]
+///     // group4 will be created with group5 as a subgroup
+///     "group4" -> ["group5"]
+/// );
+/// ```
+macro_rules! create_groups {
+    (
+        $file_name:ident,
+        $($group:literal -> [$($subgroup:literal$(,)?)*],)*
+    ) => {
+        $(
+            commands::create::CreateArgs {
+                group_name: $group.to_string(),
+                parent_group: None,
+            }.run($file_name);
+            $(
+                commands::create::CreateArgs {
+                    group_name: $subgroup.to_string(),
+                    parent_group: Some($group.to_string()),
+                }.run($file_name);
+            )*
+        )*
+    };
+}
+
+/// Inserts a list of groups into a project
+/// ```rs
+/// // Insert group objects
+/// insert_groups!(project, group1, group2, group3);
+///
+/// // Or create them on demand
+/// insert_groups!(project, "group1", "group2", "group3");
+/// ```
+macro_rules! insert_groups {
+    (
+        $project:ident, $($group:ident$(,)?)*
+    ) => {
+        $($project.groups.insert($group.name.to_string(), $group);)*
+    };
+    (
+        $project:ident, $($group:literal$(,)?)*
+    ) => {
+        $($project.groups.insert($group.to_string(), Group::new($group));)*
+    };
+}
+
+/// Push a list of groups into a group
+/// ```rs
+/// push_groups!(group, "subgroup1", "subgroup2");
+/// ```
+macro_rules! push_groups {
+    (
+        $group:ident, $($subgroup:literal$(,)?)*
+    ) =>{
+        $($group.groups.push($subgroup.to_string());)*
+    };
+}
+
+/// Set watch status for a list of groups
+/// ```rs
+/// // To watch:
+/// watch_groups!(file_name, true, "group1", "group2");
+/// // To unwatch:
+/// watch_groups!(file_name, false, "group1", "group2");
+/// ```
+macro_rules! watch_groups {
+    (
+        $file_name:ident, true, $($group:literal$(,)?)*
+    ) =>{
+        $(commands::watch::WatchArgs {
+            group_names: vec![$group.to_string()]
+        }.run($file_name);)*
+    };
+    (
+        $file_name:ident, false, $($group:literal$(,)?)*
+    ) =>{
+        $(commands::unwatch::UnwatchArgs {
+            group_names: vec![$group.to_string()]
+        }.run($file_name);)*
+    };
+}
+
 fn clean(file_name: &str) {
     let file = fs::metadata(file_name).is_ok();
     if file {
@@ -62,29 +151,19 @@ mod tests {
         clean(file_name);
 
         let mut project = Project::new();
-        project.groups.insert("group1".to_string(), Group::new("group1"));
-        project.groups.insert("group2".to_string(), Group::new("group2"));
-        project.groups.insert("group3".to_string(), Group::new("group3"));
+
+        insert_groups!(project, "group1", "group2", "group3");
 
         commands::init::InitArgs.run(file_name);
 
-        commands::create::CreateArgs {
-            group_name: "group1".to_string(),
-            parent_group: None,
-        }.run(file_name);
-        commands::create::CreateArgs {
-            group_name: "group2".to_string(),
-            parent_group: None,
-        }.run(file_name);
-        commands::create::CreateArgs {
-            group_name: "group3".to_string(),
-            parent_group: None,
-        }.run(file_name);
-        // expect to not create a group (duplicate group)
-        commands::create::CreateArgs {
-            group_name: "group3".to_string(),
-            parent_group: None,
-        }.run(file_name);
+        create_groups!(
+            file_name,
+            "group1" -> [],
+            "group2" -> [],
+            "group3" -> [],
+            // should not create duplicates
+            "group3" -> [],
+        );
 
         let Some(data) = utils::get_data(file_name) else {
             panic!("Failed to get data");
@@ -118,43 +197,19 @@ mod tests {
         let mut group4 = Group::new("group4");
         let group5 = Group::new("group5");
 
-        group2.groups.push("group3".to_string());
-        group2.groups.push("group4".to_string());
-        group4.groups.push("group5".to_string());
+        push_groups!(group2, "group3", "group4");
+        push_groups!(group4, "group5");
 
-        project.groups.insert(group1.name.to_string(), group1);
-        project.groups.insert(group2.name.to_string(), group2);
-        project.groups.insert(group3.name.to_string(), group3);
-        project.groups.insert(group4.name.to_string(), group4);
-        project.groups.insert(group5.name.to_string(), group5);
+        insert_groups!(project, group1, group2, group3, group4, group5);
 
         commands::init::InitArgs.run(file_name);
 
-        commands::create::CreateArgs {
-            group_name: "group1".to_string(),
-            parent_group: None,
-        }.run(file_name);
-        commands::create::CreateArgs {
-            group_name: "group2".to_string(),
-            parent_group: None,
-        }.run(file_name);
-        commands::create::CreateArgs {
-            group_name: "group3".to_string(),
-            parent_group: Some("group2".to_string()),
-        }.run(file_name);
-        commands::create::CreateArgs {
-            group_name: "group4".to_string(),
-            parent_group: Some("group2".to_string()),
-        }.run(file_name);
-        commands::create::CreateArgs {
-            group_name: "group5".to_string(),
-            parent_group: Some("group4".to_string()),
-        }.run(file_name);
-        // expect to not create a group (duplicate group)
-        commands::create::CreateArgs {
-            group_name: "group5".to_string(),
-            parent_group: Some("group1".to_string()),
-        }.run(file_name);
+        create_groups!(
+            file_name,
+            "group1" -> [],
+            "group2" -> ["group3", "group4"],
+            "group4" -> ["group5"],
+        );
 
         let Some(data) = utils::get_data(file_name) else {
             panic!("Failed to get data");
@@ -183,42 +238,21 @@ mod tests {
          *     -group5:
          *       -
          */
-        commands::create::CreateArgs {
-            group_name: "group1".to_string(),
-            parent_group: None,
-        }.run(file_name);
-        commands::create::CreateArgs {
-            group_name: "group2".to_string(),
-            parent_group: None,
-        }.run(file_name);
-        commands::create::CreateArgs {
-            group_name: "group3".to_string(),
-            parent_group: Some("group2".to_string()),
-        }.run(file_name);
-        commands::create::CreateArgs {
-            group_name: "group4".to_string(),
-            parent_group: Some("group2".to_string()),
-        }.run(file_name);
-        commands::create::CreateArgs {
-            group_name: "group5".to_string(),
-            parent_group: Some("group4".to_string()),
-        }.run(file_name);
+        create_groups!(
+            file_name,
+            "group1" -> [],
+            "group2" -> ["group3", "group4"],
+            "group4" -> ["group5"],
+        );
 
-        commands::watch::WatchArgs {
-            group_names: vec!["group4".to_string()],
-        }.run(file_name);
+        watch_groups!(file_name, true, "group4");
 
         let Some(data) = utils::get_data(file_name) else {
             panic!("Failed to get data");
         };
         assert_eq!(data.active_groups, vec!["group4", "group5"]);
 
-        commands::watch::WatchArgs {
-            group_names: vec!["group1".to_string()],
-        }.run(file_name);
-        commands::watch::WatchArgs {
-            group_names: vec!["group2".to_string()],
-        }.run(file_name);
+        watch_groups!(file_name, true, "group1", "group2");
 
         let Some(data) = utils::get_data(file_name) else {
             panic!("Failed to get data");
@@ -247,43 +281,22 @@ mod tests {
          *     -group5:
          *       -
          */
-        commands::create::CreateArgs {
-            group_name: "group1".to_string(),
-            parent_group: None,
-        }.run(file_name);
-        commands::create::CreateArgs {
-            group_name: "group2".to_string(),
-            parent_group: None,
-        }.run(file_name);
-        commands::create::CreateArgs {
-            group_name: "group3".to_string(),
-            parent_group: Some("group2".to_string()),
-        }.run(file_name);
-        commands::create::CreateArgs {
-            group_name: "group4".to_string(),
-            parent_group: Some("group2".to_string()),
-        }.run(file_name);
-        commands::create::CreateArgs {
-            group_name: "group5".to_string(),
-            parent_group: Some("group4".to_string()),
-        }.run(file_name);
+        create_groups!(
+            file_name,
+            "group1" -> [],
+            "group2" -> ["group3", "group4"],
+            "group4" -> ["group5"],
+        );
 
-        commands::watch::WatchArgs {
-            group_names: vec!["group2".to_string()],
-        }.run(file_name);
-
-        commands::unwatch::UnwatchArgs {
-            group_names: vec!["group5".to_string()],
-        }.run(file_name);
+        watch_groups!(file_name, true, "group2");
+        watch_groups!(file_name, false, "group5");
 
         let Some(data) = utils::get_data(file_name) else {
             panic!("Failed to get data");
         };
         assert_eq!(data.active_groups, vec!["group2", "group3", "group4"]);
 
-        commands::unwatch::UnwatchArgs {
-            group_names: vec!["group2".to_string()],
-        }.run(file_name);
+        watch_groups!(file_name, false, "group2");
 
         let Some(data) = utils::get_data(file_name) else {
             panic!("Failed to get data");
