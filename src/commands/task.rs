@@ -61,6 +61,9 @@ pub struct TaskUndoArgs {
 pub struct TaskProgressArgs {
     /// The group that you want to see the progress for
     pub group_name: Option<String>,
+    /// Use this flag to view progress of all groups in the project (ignores GROUP_NAME)
+    #[arg(short, long)]
+    all: bool,
 }
 
 fn display_progress(group: Group) {
@@ -245,6 +248,13 @@ impl super::Command for TaskProgressArgs {
         let Some(data) = utils::get_data(file_name) else {
             return;
         };
+
+        if self.all {
+            for (group, _) in &data.groups {
+                display_progress(data.get_group(group));
+            }
+            return;
+        }
 
         if self.group_name.is_some() {
             let group_name = self.group_name.unwrap();
