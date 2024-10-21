@@ -81,7 +81,11 @@ fn display_progress(group: Group) {
         .filter(|t| t.state == TaskState::Incomplete)
         .collect();
 
-    let progress_percentage = finished_tasks.len() * 100 / group.tasks.len();
+    let progress_percentage = if group.tasks.len() != 0 {
+        finished_tasks.len() * 100 / group.tasks.len()
+    } else {
+        0
+    };
 
     let mut parsed_progress = String::new();
 
