@@ -19,7 +19,8 @@ macro_rules! watch_groups {
         $file_name:ident, false, $($group:literal$(,)?)*
     ) =>{
         $(commands::unwatch::UnwatchArgs {
-            group_names: vec![$group.to_string()]
+            group_names: vec![$group.to_string()],
+            all: false,
         }.run($file_name);)*
     };
 }
@@ -266,7 +267,7 @@ mod tests {
     }
 
     #[test]
-    fn create_with_parent() {
+    fn create_with_parent_2() {
         generate_test!(
             ".create-with-parent.pmgr" => {
                 group1 -> [],
