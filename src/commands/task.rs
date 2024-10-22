@@ -250,7 +250,7 @@ impl super::Command for TaskProgressArgs {
         };
 
         if self.all {
-            for (group, _) in &data.groups {
+            for group in data.groups.keys() {
                 display_progress(data.get_group(group));
             }
             return;
