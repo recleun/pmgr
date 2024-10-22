@@ -63,7 +63,7 @@ impl Project {
     pub fn clean(&mut self) {
         let groups = self.groups.clone();
 
-        for (k, _) in &groups {
+        for k in groups.keys() {
             let g = self.get_group(k);
             for child in &g.groups {
                 if !self.groups.contains_key(child) {
