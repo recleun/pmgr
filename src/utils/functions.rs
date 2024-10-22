@@ -62,7 +62,7 @@ pub fn write_data(file_name: &str, data: &Project) {
 
     fs::write(
         path,
-        serde_json::to_string(data).expect("Failed to serialize project data"),
+        serde_json::to_string_pretty(data).expect("Failed to serialize project data"),
     )
     .expect("Failed to write project data");
 }
