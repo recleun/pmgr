@@ -70,7 +70,7 @@ impl super::Command for ListArgs {
                     note_count += 1;
                     println!("    {} - {}", note_count, note.note);
                 }
-                println!("");
+                println!();
             }
             if !group.tasks.is_empty() {
                 println!("  Tasks:");
@@ -83,7 +83,7 @@ impl super::Command for ListArgs {
                     };
                     println!("    {} - [{}] {}", task_count, task_state,  task.task);
                 }
-                println!("");
+                println!();
             }
             if group.notes.is_empty() && group.tasks.is_empty() {
                 println!("Group is empty...\n");
