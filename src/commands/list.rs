@@ -56,7 +56,7 @@ impl super::Command for ListArgs {
                     .print();
                 return;
             }
-            for (group, _) in &data.groups {
+            for group in data.groups.keys() {
                 groups.push(data.get_group(group));
             }
         }
