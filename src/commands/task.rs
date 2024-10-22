@@ -63,7 +63,7 @@ pub struct TaskProgressArgs {
     pub group_name: Option<String>,
     /// Use this flag to view progress of all groups in the project (ignores GROUP_NAME)
     #[arg(short, long)]
-    all: bool,
+    pub all: bool,
 }
 
 fn display_progress(group: Group) {
