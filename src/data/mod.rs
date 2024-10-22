@@ -4,8 +4,16 @@ use serde::{Serialize, Deserialize};
 
 #[derive(Serialize, Deserialize, Debug, PartialEq)]
 pub struct Project {
+    pub information: ProjectInformation,
     pub active_groups: Vec<String>,
     pub groups: HashMap<String, Group>,
+}
+
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
+pub struct ProjectInformation {
+    pub title: Option<String>,
+    pub description: Option<String>,
+    pub repo: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
@@ -36,6 +44,7 @@ pub enum TaskState {
 impl Project {
     pub fn new() -> Self {
         Project {
+            information: ProjectInformation::new(),
             groups: HashMap::new(),
             active_groups: vec![],
         }
@@ -82,6 +91,16 @@ impl Default for Project {
     #[inline]
     fn default() -> Self {
         Self::new()
+    }
+}
+
+impl ProjectInformation {
+    pub fn new() -> Self {
+        ProjectInformation {
+            title: None,
+            description: None,
+            repo: None,
+        }
     }
 }
 
