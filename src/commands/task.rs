@@ -1,24 +1,7 @@
 use crate::data::{self, Group, TaskState};
 use crate::{utils, Cli};
 use clap::error::ErrorKind;
-use clap::{Args, CommandFactory, Parser, Subcommand, ValueEnum};
-
-#[derive(Args)]
-pub struct TaskArgs {
-    pub subcommand: Subcommands,
-    pub group_name: String,
-    pub ids: Vec<usize>,
-}
-
-#[derive(ValueEnum, Clone)]
-pub enum Subcommands {
-    /// Set task(s) as complete
-    Complete,
-    /// Set task(s) as incomplete
-    Undo,
-    /// View progress of tasks
-    Progress,
-}
+use clap::{Args, CommandFactory, Parser, Subcommand};
 
 #[derive(Subcommand)]
 pub enum Commands {
