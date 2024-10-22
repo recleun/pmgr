@@ -33,7 +33,6 @@ impl super::Command for InitArgs {
                 let _ = Cli::command()
                     .error(ErrorKind::Io, format!("Failed to initalize project: {}", e))
                     .print();
-                return
             }
         }
     }
