@@ -52,7 +52,7 @@ impl super::Command for AddNoteArgs {
                 )
                 .print();
             return;
-        } else if self.text.len() == 0 {
+        } else if self.text.is_empty() {
             let _ = Cli::command()
                 .error(ErrorKind::MissingRequiredArgument, "No text was specified")
                 .print();
@@ -66,7 +66,7 @@ impl super::Command for AddNoteArgs {
         utils::write_data(file_name, &data);
 
         println!("Added note to group `{}` successfully", self.group_name);
-    } 
+    }
 
 }
 
@@ -84,7 +84,7 @@ impl super::Command for AddTaskArgs {
                 )
                 .print();
             return;
-        } else if self.text.len() == 0 {
+        } else if self.text.is_empty() {
             let _ = Cli::command()
                 .error(ErrorKind::MissingRequiredArgument, "No text was specified")
                 .print();
@@ -98,5 +98,5 @@ impl super::Command for AddTaskArgs {
         utils::write_data(file_name, &data);
 
         println!("Added task to group `{}` successfully", self.group_name);
-    } 
+    }
 }

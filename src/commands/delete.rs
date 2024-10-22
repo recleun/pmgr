@@ -10,7 +10,7 @@ pub struct DeleteArgs {
 
 impl super::Command for DeleteArgs {
     fn run(self, file_name: &str) {
-        if self.group_names.len() == 0 {
+        if self.group_names.is_empty() {
             let _ = Cli::command()
                 .error(
                     ErrorKind::MissingRequiredArgument,
@@ -30,7 +30,7 @@ impl super::Command for DeleteArgs {
             }
         }
 
-        if undefined_groups.len() > 0 {
+        if !undefined_groups.is_empty() {
             let _ = Cli::command()
                 .error(
                     ErrorKind::ValueValidation,
@@ -50,7 +50,7 @@ impl super::Command for DeleteArgs {
             to_delete.append(&mut data.get_group_descendants(group));
         }
 
-        while to_delete.len() > 0 {
+        while !to_delete.is_empty() {
             if data.active_groups.contains(&to_delete[0]) {
                 let index = data
                     .active_groups

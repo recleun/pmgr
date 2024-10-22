@@ -33,14 +33,14 @@ impl super::Command for ListArgs {
 
             let group = data.get_group(group_name);
             groups.push(group.clone());
-            if group.groups.len() > 0 {
+            if !group.groups.is_empty() {
                 let descendants = data.get_group_descendants(group_name);
                 for descendant in descendants {
                     groups.push(data.get_group(&descendant));
                 }
             }
         } else if !self.all {
-            if data.active_groups.len() == 0 {
+            if data.active_groups.is_empty() {
                 let _ = Cli::command()
                     .error(ErrorKind::Io, "No groups are being watched (Use --all flag to list all groups)")
                     .print();
@@ -50,7 +50,7 @@ impl super::Command for ListArgs {
                 groups.push(data.get_group(group));
             }
         } else {
-            if data.groups.len() == 0 {
+            if data.groups.is_empty() {
                 let _ = Cli::command()
                     .error(ErrorKind::Io, "No groups exist to list")
                     .print();
@@ -63,7 +63,7 @@ impl super::Command for ListArgs {
 
         for group in &groups {
             println!("\n[{}]\n", group.name);
-            if group.notes.len() > 0 {
+            if !group.notes.is_empty() {
                 println!("  Notes:");
                 let mut note_count = 0;
                 for note in &group.notes {
@@ -72,7 +72,7 @@ impl super::Command for ListArgs {
                 }
                 println!("");
             }
-            if group.tasks.len() > 0 {
+            if !group.tasks.is_empty() {
                 println!("  Tasks:");
                 let mut task_count = 0;
                 for task in &group.tasks {
@@ -85,7 +85,7 @@ impl super::Command for ListArgs {
                 }
                 println!("");
             }
-            if group.notes.len() == 0 && group.tasks.len() == 0 {
+            if group.notes.is_empty() && group.tasks.is_empty() {
                 println!("Group is empty...\n");
             }
         }

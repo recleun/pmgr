@@ -19,7 +19,7 @@ impl super::Command for UnwatchArgs {
 
         let mut to_unwatch: Vec<String> = vec![];
 
-        if self.all && data.active_groups.len() != 0 {
+        if self.all && !data.active_groups.is_empty() {
             to_unwatch = data.active_groups.clone();
         } else if self.all {
             let _ = Cli::command()
@@ -27,7 +27,7 @@ impl super::Command for UnwatchArgs {
                 .print();
             return;
         } else {
-            if self.group_names.len() == 0 {
+            if self.group_names.is_empty() {
                 let _ = Cli::command()
                     .error(
                         ErrorKind::MissingRequiredArgument,
@@ -47,7 +47,7 @@ impl super::Command for UnwatchArgs {
                 }
             }
 
-            if unwatched_groups.len() > 0 && undefined_groups.len() > 0 {
+            if !unwatched_groups.is_empty() && !undefined_groups.is_empty() {
                 let _ = Cli::command()
                     .error(
                         ErrorKind::ValueValidation,
@@ -55,7 +55,7 @@ impl super::Command for UnwatchArgs {
                     )
                     .print();
                 return;
-            } else if unwatched_groups.len() > 0 {
+            } else if !unwatched_groups.is_empty() {
                 let _ = Cli::command()
                     .error(
                         ErrorKind::ValueValidation,
@@ -66,7 +66,7 @@ impl super::Command for UnwatchArgs {
                     )
                     .print();
                 return;
-            } else if undefined_groups.len() > 0 {
+            } else if !undefined_groups.is_empty() {
                 let _ = Cli::command()
                     .error(
                         ErrorKind::ValueValidation,
@@ -87,7 +87,7 @@ impl super::Command for UnwatchArgs {
 
         let unwatched = to_unwatch.clone();
 
-        while to_unwatch.len() > 0 {
+        while !to_unwatch.is_empty() {
             if data.active_groups.contains(&to_unwatch[0]) {
                 let index = data
                     .active_groups

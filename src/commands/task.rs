@@ -84,7 +84,7 @@ fn display_progress(group: Group) {
         .filter(|t| t.state == TaskState::Incomplete)
         .collect();
 
-    let progress_percentage = if group.tasks.len() != 0 {
+    let progress_percentage = if !group.tasks.is_empty() {
         finished_tasks.len() * 100 / group.tasks.len()
     } else {
         0
@@ -131,7 +131,7 @@ impl super::Command for TaskCompleteArgs {
                 )
                 .print();
             return;
-        } else if self.ids.len() == 0 {
+        } else if self.ids.is_empty() {
             let _ = Cli::command()
                 .error(
                     ErrorKind::MissingRequiredArgument,
@@ -150,7 +150,7 @@ impl super::Command for TaskCompleteArgs {
             }
         }
 
-        if invalid_ids.len() > 0 {
+        if !invalid_ids.is_empty() {
             let _ = Cli::command()
                 .error(
                     ErrorKind::InvalidValue,
@@ -194,7 +194,7 @@ impl super::Command for TaskUndoArgs {
                 )
                 .print();
             return;
-        } else if self.ids.len() == 0 {
+        } else if self.ids.is_empty() {
             let _ = Cli::command()
                 .error(
                     ErrorKind::MissingRequiredArgument,
@@ -213,7 +213,7 @@ impl super::Command for TaskUndoArgs {
             }
         }
 
-        if invalid_ids.len() > 0 {
+        if !invalid_ids.is_empty() {
             let _ = Cli::command()
                 .error(
                     ErrorKind::InvalidValue,
@@ -264,7 +264,7 @@ impl super::Command for TaskProgressArgs {
             for g in &groups {
                 display_progress(data.get_group(g));
             }
-        } else if data.active_groups.len() > 0 {
+        } else if !data.active_groups.is_empty() {
             for g in &data.active_groups {
                 display_progress(data.get_group(g));
             }
