@@ -78,6 +78,13 @@ impl Project {
     }
 }
 
+impl Default for Project {
+    #[inline]
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Group {
     pub fn new(name: &str) -> Self {
         Group {
