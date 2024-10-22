@@ -271,9 +271,9 @@ mod tests {
         generate_test!(
             ".create-with-parent.pmgr" => {
                 group1 -> [],
-                group2 -> [],
-                group3 -> [],
-                group3 -> [],
+                group1 -> [],
+                group2 -> [group3, group4],
+                group4 -> [group5],
             },
             generate_ending_check2
         );
