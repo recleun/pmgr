@@ -112,7 +112,19 @@ macro_rules! __generate_test {
         // just here
         #[allow(unused_mut, unused_variables)]
         let mut $project = Project::new();
-        $( $project.groups.insert(stringify!($group).to_string(), Group::new(stringify!($group))); )*
+
+        $(
+        #[allow(unused_mut, unused_variables)]
+            let mut $group = Group::new(stringify!($group));
+            $(
+                let $subgroup = Group::new(stringify!($subgroup));
+                $group.groups.push(stringify!($subgroup).to_string());
+                $project.groups.insert(stringify!($subgroup).to_string(), $subgroup);
+            )*
+
+            $project.groups.insert(stringify!($group).to_string(), $group);
+        )*
+
         $($extra_block)?
 
         commands::init::InitArgs.run($file_name_variable);
