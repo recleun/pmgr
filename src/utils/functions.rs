@@ -40,7 +40,7 @@ pub fn get_data(file_name: &str) -> Option<Project> {
         Ok(path) => {
             let data = serde_json::from_reader(path).expect_with("Failed to read project data");
 
-            return Some(data);
+            Some(data)
         }
         Err(e) => {
             let _ = Cli::command()
