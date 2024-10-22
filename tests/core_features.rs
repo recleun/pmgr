@@ -267,7 +267,7 @@ mod tests {
     }
 
     #[test]
-    fn create_with_parent_2() {
+    fn create_with_parent() {
         generate_test!(
             ".create-with-parent.pmgr" => {
                 group1 -> [],
