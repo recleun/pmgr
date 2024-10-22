@@ -155,7 +155,7 @@ macro_rules! __generate_test {
 /// must be a macro that accepts an `ident` and an `expr`. That macro is called at the
 /// very end of the test, right before the final [`clean`].
 ///
-/// FOr match arm #2, the syntax goes like:
+/// For match arm #2, the syntax goes like:
 /// ```rs
 /// (file_name, project) => { ... }
 /// ```
