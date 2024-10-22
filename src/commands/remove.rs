@@ -57,7 +57,7 @@ impl super::Command for RemoveNoteArgs {
                 )
                 .print();
             return;
-        } else if self.ids.len() == 0 {
+        } else if self.ids.is_empty() {
             let _ = Cli::command()
                 .error(ErrorKind::MissingRequiredArgument, "No data ID specified")
                 .print();
@@ -75,7 +75,7 @@ impl super::Command for RemoveNoteArgs {
             }
         }
 
-        if invalid_ids.len() > 0 {
+        if !invalid_ids.is_empty() {
             let _ = Cli::command()
                 .error(
                     ErrorKind::InvalidValue,
@@ -117,7 +117,7 @@ impl super::Command for RemoveTaskArgs {
                 )
                 .print();
             return;
-        } else if self.ids.len() == 0 {
+        } else if self.ids.is_empty() {
             let _ = Cli::command()
                 .error(ErrorKind::MissingRequiredArgument, "No data ID specified")
                 .print();
@@ -135,7 +135,7 @@ impl super::Command for RemoveTaskArgs {
             }
         }
 
-        if invalid_ids.len() > 0 {
+        if !invalid_ids.is_empty() {
             let _ = Cli::command()
                 .error(
                     ErrorKind::InvalidValue,

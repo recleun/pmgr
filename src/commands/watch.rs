@@ -10,7 +10,7 @@ pub struct WatchArgs {
 
 impl super::Command for WatchArgs {
     fn run(self, file_name: &str) {
-        if self.group_names.len() == 0 {
+        if self.group_names.is_empty() {
             let _ = Cli::command()
                 .error(
                     ErrorKind::MissingRequiredArgument,
@@ -33,7 +33,7 @@ impl super::Command for WatchArgs {
             }
         }
 
-        if already_active.len() > 0 && undefined_groups.len() > 0 {
+        if !already_active.is_empty() && !undefined_groups.is_empty() {
             let _ = Cli::command()
                 .error(
                     ErrorKind::ValueValidation,
@@ -41,7 +41,7 @@ impl super::Command for WatchArgs {
                 )
                 .print();
             return;
-        } else if already_active.len() > 0 {
+        } else if !already_active.is_empty() {
             let _ = Cli::command()
                 .error(
                     ErrorKind::ValueValidation,
@@ -52,7 +52,7 @@ impl super::Command for WatchArgs {
                 )
                 .print();
             return;
-        } else if undefined_groups.len() > 0 {
+        } else if !undefined_groups.is_empty() {
             let _ = Cli::command()
                 .error(
                     ErrorKind::ValueValidation,
