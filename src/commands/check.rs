@@ -17,7 +17,6 @@ impl super::Command for CheckArgs {
                         format!("Failed to check for a project: {}", e),
                     )
                     .print();
-                return;
             }
         }
     }
