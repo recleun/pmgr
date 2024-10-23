@@ -13,6 +13,7 @@ fn main() {
         Commands::Check(args) => args.run(FILE_NAME),
         Commands::Read(args) => args.run(FILE_NAME),
         Commands::List(args) => args.run(FILE_NAME),
+        Commands::Info(args) => args.run(FILE_NAME),
         Commands::Init(args) => args.run(FILE_NAME),
         Commands::Set(args) => {
             match args.set_commands {

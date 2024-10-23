@@ -3,6 +3,7 @@ use clap::{self, Args, CommandFactory, Parser, Subcommand};
 use clap_complete::aot::{generate, Generator, Shell};
 pub mod read;
 pub mod list;
+pub mod info;
 pub mod check;
 pub mod init;
 pub mod set;
@@ -28,6 +29,8 @@ pub enum Commands {
     Read(read::ReadArgs),
     /// List a group's data or active groups data
     List(list::ListArgs),
+    /// Display the project's information
+    Info(info::InfoArgs),
     /// Checks for a project in current and parent directories
     Check(check::CheckArgs),
     /// Initialize a project in the current directory
