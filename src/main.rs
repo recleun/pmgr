@@ -14,6 +14,13 @@ fn main() {
         Commands::Read(args) => args.run(FILE_NAME),
         Commands::List(args) => args.run(FILE_NAME),
         Commands::Init(args) => args.run(FILE_NAME),
+        Commands::Set(args) => {
+            match args.set_commands {
+                pmgr::set::SetCommands::Title(args) => args.run(FILE_NAME),
+                pmgr::set::SetCommands::Description(args) => args.run(FILE_NAME),
+                pmgr::set::SetCommands::Repo(args) => args.run(FILE_NAME),
+            }
+        },
         Commands::ShellCompletions(args) => args.run(),
         Commands::Create(args) => args.run(FILE_NAME),
         Commands::Delete(args) => args.run(FILE_NAME),

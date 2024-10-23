@@ -5,6 +5,7 @@ pub mod read;
 pub mod list;
 pub mod check;
 pub mod init;
+pub mod set;
 pub mod create;
 pub mod delete;
 pub mod watch;
@@ -31,6 +32,8 @@ pub enum Commands {
     Check(check::CheckArgs),
     /// Initialize a project in the current directory
     Init(init::InitArgs),
+    /// Set project's information fields
+    Set(set::Set),
     /// Create a group in the current project
     Create(create::CreateArgs),
     /// Delete a group in the current project
