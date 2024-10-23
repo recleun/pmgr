@@ -128,7 +128,7 @@ making the group contain zero information of what it's about.
 
 There are some types of data that you can use, some of them are notes and tasks:
 - Note: A piece of text, can be like a reminder, or something to consider for the group.
-- Task: A field like a checkbox, you can set it as complete/incomplete, it also contains text about the task itself.
+- Task: A field like a checkbox, you can set it as complete/incomplete, it also contains text about the task itself. More on tasks can be found [here](tasks.md).
 
 ### Adding Data
 
