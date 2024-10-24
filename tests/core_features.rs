@@ -292,7 +292,7 @@ mod tests {
     }
 
     #[test]
-    fn simple_select() {
+    fn simple_watch() {
         generate_test!(
             ".simple-select.pmgr" => {
                 group1 -> [],
@@ -312,7 +312,7 @@ mod tests {
     }
 
     #[test]
-    fn simple_deselect() {
+    fn simple_unwatch() {
         generate_test!(
             ".simple-deselect.pmgr" => {
                 group1 -> [],
