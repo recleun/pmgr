@@ -61,6 +61,22 @@ macro_rules! delete_groups {
     };
 }
 
+#[macro_export]
+macro_rules! add_tasks_local {
+    (
+        $project:ident,
+        $group:literal,
+        $(TaskState::$state:ident -> $task:literal$(,)?)*
+    ) => {
+        $(
+            $project.groups.get_mut($group).unwrap().tasks.push(Task {
+                task: $task.to_string(),
+                state: TaskState::$state,
+            });
+        )*
+    };
+}
+
 /// Inserts a list of groups into a project
 /// ```rs
 /// // Insert group objects
