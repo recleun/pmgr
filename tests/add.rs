@@ -51,5 +51,7 @@ mod tests {
         };
 
         assert_eq!(data.groups, project.groups);
+
+        common::clean(file_name);
     }
 }
