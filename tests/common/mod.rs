@@ -33,6 +33,18 @@ macro_rules! create_groups {
     };
 }
 
+#[macro_export]
+macro_rules! delete_groups {
+    (
+        $file_name:ident, $($group:literal$(,)?)*
+    ) => {
+        $(println!("group name: {}", $group);)*
+        commands::delete::DeleteArgs {
+            group_names: vec![$($group.to_string(),)*]
+        }.run($file_name);
+    };
+}
+
 /// Inserts a list of groups into a project
 /// ```rs
 /// // Insert group objects
