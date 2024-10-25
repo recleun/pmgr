@@ -7,7 +7,7 @@ mod tests {
     use pmgr::{commands, utils, Command};
 
     #[test]
-    fn simple_select() {
+    fn simple_watch() {
         let file_name = ".simple-select.pmgr";
         common::clean(file_name);
 
@@ -41,7 +41,7 @@ mod tests {
     }
 
     #[test]
-    fn simple_deselect() {
+    fn simple_unwatch() {
         let file_name = ".simple-deselect.pmgr";
         common::clean(file_name);
 
