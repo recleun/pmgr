@@ -1,5 +1,6 @@
 # prevent .pmgr files from getting into version control
 *.pmgr
+*.pmgr.json
 
 # will have compiled files and executables
 debug/
