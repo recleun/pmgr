@@ -62,6 +62,22 @@ macro_rules! delete_groups {
 }
 
 #[macro_export]
+macro_rules! add_tasks {
+    (
+        $file_name:ident,
+        $group:literal,
+        $($task:literal$(,)?)*
+    ) => {
+        $(
+            commands::add::AddTaskArgs {
+                group_name: $group.to_string(),
+                text: vec![$task.to_string()],
+            }.run($file_name);
+        )*
+    };
+}
+
+#[macro_export]
 macro_rules! add_tasks_local {
     (
         $project:ident,
@@ -72,6 +88,36 @@ macro_rules! add_tasks_local {
             $project.groups.get_mut($group).unwrap().tasks.push(Task {
                 task: $task.to_string(),
                 state: TaskState::$state,
+            });
+        )*
+    };
+}
+#[macro_export]
+macro_rules! add_notes {
+    (
+        $file_name:ident,
+        $group:literal,
+        $($note:literal$(,)?)*
+    ) => {
+        $(
+            commands::add::AddNoteArgs {
+                group_name: $group.to_string(),
+                text: vec![$note.to_string()],
+            }.run($file_name);
+        )*
+    };
+}
+
+#[macro_export]
+macro_rules! add_notes_local {
+    (
+        $project:ident,
+        $group:literal,
+        $($note:literal$(,)?)*
+    ) => {
+        $(
+            $project.groups.get_mut($group).unwrap().notes.push(Note {
+                note: $note.to_string(),
             });
         )*
     };
