@@ -2,9 +2,9 @@ use clap::Parser;
 use pmgr::commands::{Cli, Commands, Command};
 
 #[cfg(debug_assertions)]
-const FILE_NAME: &str = ".debug.pmgr";
+const FILE_NAME: &str = ".debug.pmgr.json";
 #[cfg(not(debug_assertions))]
-const FILE_NAME: &str = ".pmgr";
+const FILE_NAME: &str = ".pmgr.json";
 
 fn main() {
     let cli = Cli::parse();
