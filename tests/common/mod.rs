@@ -106,6 +106,34 @@ macro_rules! remove_tasks {
 }
 
 #[macro_export]
+macro_rules! complete_tasks {
+    (
+        $file_name:ident,
+        $group_name:literal,
+        $($id:literal -> TaskState::Complete,)*
+    ) =>{
+        commands::task::TaskCompleteArgs {
+            group_name: $group_name.to_string(),
+            ids: vec![$($id,)*],
+        }.run($file_name);
+    };
+}
+
+#[macro_export]
+macro_rules! undo_tasks {
+    (
+        $file_name:ident,
+        $group_name:literal,
+        $($id:literal -> TaskState::Incomplete,)*
+    ) =>{
+        commands::task::TaskUndoArgs {
+            group_name: $group_name.to_string(),
+            ids: vec![$($id,)*],
+        }.run($file_name);
+    };
+}
+
+#[macro_export]
 macro_rules! add_notes {
     (
         $file_name:ident,
