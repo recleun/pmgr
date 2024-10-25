@@ -136,6 +136,18 @@ macro_rules! add_notes_local {
     };
 }
 
+#[macro_export]
+macro_rules! remove_notes {
+    (
+        $file_name:ident, $group_name:literal, $($id:literal$(,)?)*
+    ) =>{
+        commands::remove::RemoveNoteArgs {
+            group_name: $group_name.to_string(),
+            ids: vec![$($id,)*],
+        }.run($file_name);
+    };
+}
+
 /// Inserts a list of groups into a project
 /// ```rs
 /// // Insert group objects
