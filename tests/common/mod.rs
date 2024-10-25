@@ -92,6 +92,19 @@ macro_rules! add_tasks_local {
         )*
     };
 }
+
+#[macro_export]
+macro_rules! remove_tasks {
+    (
+        $file_name:ident, $group_name:literal, $($id:literal$(,)?)*
+    ) =>{
+        commands::remove::RemoveTaskArgs {
+            group_name: $group_name.to_string(),
+            ids: vec![$($id,)*],
+        }.run($file_name);
+    };
+}
+
 #[macro_export]
 macro_rules! add_notes {
     (
