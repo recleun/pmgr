@@ -12,7 +12,7 @@ mod tests {
 
     #[test]
     fn simple_remove() {
-        let file_name = ".simple-add.pmgr";
+        let file_name = ".simple-remove.pmgr";
         common::clean(file_name);
         commands::init::InitArgs.run(file_name);
 
@@ -52,5 +52,7 @@ mod tests {
         };
 
         assert_eq!(data.groups, project.groups);
+
+        common::clean(file_name);
     }
 }
