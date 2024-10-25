@@ -6,7 +6,7 @@ mod tests {
     use common;
     use pmgr::{
         commands,
-        data::{Group, Note, Project, Task, TaskState},
+        data::{Group, Project, Task, TaskState},
         utils, Command,
     };
 
