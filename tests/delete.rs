@@ -26,26 +26,22 @@ mod tests {
 
         delete_groups!(file_name, "group4");
 
-        let mut project = Project::new();
-        let group1 = Group::new("group1");
-        let mut group2 = Group::new("group2");
-        let group3 = Group::new("group3");
-
-        push_groups!(group2, "group3", "group4");
-
-        group2.groups = vec!["group3".to_string()];
-
-        insert_groups!(project, group1, group2, group3);
+        create_groups_local!(
+            project,
+            group1 -> [],
+            group2 -> ["group3"],
+            group3 -> [],
+        );
 
         let Some(data) = utils::get_data(file_name) else {
             panic!("Failed to get data");
         };
         assert_eq!(data.groups, project.groups);
 
-        project.groups.remove("group2");
         project.groups.remove("group3");
+        project.groups.get_mut("group2").unwrap().groups = vec![];
 
-        delete_groups!(file_name, "group2");
+        delete_groups!(file_name, "group3");
 
         let Some(data) = utils::get_data(file_name) else {
             panic!("Failed to get data");

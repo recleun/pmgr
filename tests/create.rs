@@ -15,9 +15,12 @@ mod tests {
         let file_name = ".simple-create.pmgr";
         common::clean(file_name);
 
-        let mut project = Project::new();
-
-        insert_groups!(project, "group1", "group2", "group3");
+        create_groups_local!(
+            project,
+            group1 -> [],
+            group2 -> [],
+            group3 -> [],
+        );
 
         commands::init::InitArgs.run(file_name);
 
@@ -43,17 +46,14 @@ mod tests {
         let file_name = ".create-with-parent.pmgr";
         common::clean(file_name);
 
-        let mut project = Project::new();
-        let group1 = Group::new("group1");
-        let mut group2 = Group::new("group2");
-        let group3 = Group::new("group3");
-        let mut group4 = Group::new("group4");
-        let group5 = Group::new("group5");
-
-        push_groups!(group2, "group3", "group4");
-        push_groups!(group4, "group5");
-
-        insert_groups!(project, group1, group2, group3, group4, group5);
+        create_groups_local!(
+            project,
+            group1 -> [],
+            group2 -> ["group3", "group4"],
+            group3 -> [],
+            group4 -> ["group5"],
+            group5 -> [],
+        );
 
         commands::init::InitArgs.run(file_name);
 
