@@ -34,6 +34,22 @@ macro_rules! create_groups {
 }
 
 #[macro_export]
+macro_rules! create_groups_local {
+    (
+        $project:ident,
+        $($group:ident -> [$($subgroup:literal$(,)?)*],)*
+    ) => {
+        #[allow(unused_mut)]
+        let mut $project = Project::new();
+        $(
+            let mut $group = Group::new(stringify!($group));
+            $group.groups = vec![$($subgroup.to_string(),)*];
+        )*
+        insert_groups!($project, $($group,)*);
+    };
+}
+
+#[macro_export]
 macro_rules! delete_groups {
     (
         $file_name:ident, $($group:literal$(,)?)*
