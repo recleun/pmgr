@@ -185,19 +185,6 @@ macro_rules! insert_groups {
     };
 }
 
-/// Push a list of groups into a group
-/// ```rs
-/// push_groups!(group, "subgroup1", "subgroup2");
-/// ```
-#[macro_export]
-macro_rules! push_groups {
-    (
-        $group:ident, $($subgroup:literal$(,)?)*
-    ) =>{
-        $($group.groups.push($subgroup.to_string());)*
-    };
-}
-
 /// Sets a list of groups as watched/unwatched in a project file
 #[macro_export]
 macro_rules! watch_groups {
