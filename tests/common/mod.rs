@@ -1,17 +1,6 @@
 use std::fs;
 
-/// Creates a list of groups for a test
-/// ```rs
-/// create_groups(
-///     file_name,
-///     // group1 will be created
-///     "group1" -> []
-///     // group2 will be created with group3 and group4 as subgroups
-///     "group2" -> ["group3", "group4"]
-///     // group4 will be created with group5 as a subgroup
-///     "group4" -> ["group5"]
-/// );
-/// ```
+/// Creates a list of groups in a project file
 #[macro_export]
 macro_rules! create_groups {
     (
@@ -33,6 +22,7 @@ macro_rules! create_groups {
     };
 }
 
+/// Creates a list of groups in a project variable
 #[macro_export]
 macro_rules! create_groups_local {
     (
@@ -49,6 +39,7 @@ macro_rules! create_groups_local {
     };
 }
 
+/// Deletes a list of groups in a project file
 #[macro_export]
 macro_rules! delete_groups {
     (
@@ -61,6 +52,7 @@ macro_rules! delete_groups {
     };
 }
 
+/// Adds a list of tasks for a group in a project file
 #[macro_export]
 macro_rules! add_tasks {
     (
@@ -77,6 +69,7 @@ macro_rules! add_tasks {
     };
 }
 
+/// Adds a list of tasks for a group in a project variable
 #[macro_export]
 macro_rules! add_tasks_local {
     (
@@ -93,6 +86,7 @@ macro_rules! add_tasks_local {
     };
 }
 
+/// Removes a list of tasks from a group in a project file
 #[macro_export]
 macro_rules! remove_tasks {
     (
@@ -105,6 +99,7 @@ macro_rules! remove_tasks {
     };
 }
 
+/// Sets a list of tasks as complete/incomplete for a group in a project file
 #[macro_export]
 macro_rules! complete_tasks {
     (
@@ -129,6 +124,7 @@ macro_rules! complete_tasks {
     };
 }
 
+/// Adds a list of notes to a group in a project file
 #[macro_export]
 macro_rules! add_notes {
     (
@@ -145,6 +141,7 @@ macro_rules! add_notes {
     };
 }
 
+/// Adds a list of notes to a group in a project variable
 #[macro_export]
 macro_rules! add_notes_local {
     (
@@ -160,6 +157,7 @@ macro_rules! add_notes_local {
     };
 }
 
+/// Removes a list of notes from a group in a project file
 #[macro_export]
 macro_rules! remove_notes {
     (
@@ -172,14 +170,7 @@ macro_rules! remove_notes {
     };
 }
 
-/// Inserts a list of groups into a project
-/// ```rs
-/// // Insert group objects
-/// insert_groups!(project, group1, group2, group3);
-///
-/// // Or create them on demand
-/// insert_groups!(project, "group1", "group2", "group3");
-/// ```
+/// Inserts a list of groups into a project variable
 #[macro_export]
 macro_rules! insert_groups {
     (
@@ -207,13 +198,7 @@ macro_rules! push_groups {
     };
 }
 
-/// Set watch status for a list of groups
-/// ```rs
-/// // To watch:
-/// watch_groups!(file_name, true, "group1", "group2");
-/// // To unwatch:
-/// watch_groups!(file_name, false, "group1", "group2");
-/// ```
+/// Sets a list of groups as watched/unwatched in a project file
 #[macro_export]
 macro_rules! watch_groups {
     (
@@ -233,7 +218,7 @@ macro_rules! watch_groups {
     };
 }
 
-/// Ensures that the specified file_name does not exist, and if it does, gets removed.
+/// Ensures that the specified file_name does not exist, and if it does, gets removed
 pub fn clean(file_name: &str) {
     let file = fs::metadata(file_name).is_ok();
     if file {
