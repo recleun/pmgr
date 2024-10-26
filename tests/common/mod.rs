@@ -117,10 +117,6 @@ macro_rules! complete_tasks {
             ids: vec![$($id,)*],
         }.run($file_name);
     };
-}
-
-#[macro_export]
-macro_rules! undo_tasks {
     (
         $file_name:ident,
         $group_name:literal,

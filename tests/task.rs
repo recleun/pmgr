@@ -99,7 +99,7 @@ mod tests {
             5 -> TaskState::Complete,
         );
 
-        undo_tasks!(
+        complete_tasks!(
             file_name,
             "group3",
             1 -> TaskState::Incomplete,
