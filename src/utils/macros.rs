@@ -9,4 +9,12 @@ macro_rules! fg_color {
             styling::Reset::default().render(),
         )
     };
+    ($string:expr, $color:ident) => {
+        format!(
+            "{}{}{}",
+            styling::Style::new().fg_color(Some(styling::Color::Ansi(styling::AnsiColor::$color))),
+            $string,
+            styling::Reset::default().render(),
+        )
+    };
 }
