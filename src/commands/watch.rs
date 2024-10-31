@@ -1,6 +1,7 @@
+use clap::builder::styling;
 use clap::{error::ErrorKind, Args, CommandFactory};
 
-use crate::{utils, Cli};
+use crate::{fg_color, utils, Cli};
 
 #[derive(Args)]
 pub struct WatchArgs {
@@ -78,7 +79,8 @@ impl super::Command for WatchArgs {
         utils::write_data(file_name, &data);
 
         println!(
-            "Added group(s) to be watched successfully: {}",
+            "Added group(s) to be watched {}: {}",
+            fg_color!("successfully", Green),
             self.group_names.join(", ")
         );
     }

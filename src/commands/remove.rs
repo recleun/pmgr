@@ -1,6 +1,7 @@
-use crate::{utils, Cli};
+use crate::{fg_color, utils, Cli};
 use clap::error::ErrorKind;
 use clap::{Args, CommandFactory, Parser, Subcommand};
+use clap::builder::styling;
 
 #[derive(Args)]
 pub struct RemoveArgs {
@@ -10,7 +11,7 @@ pub struct RemoveArgs {
 
 #[derive(Subcommand)]
 pub enum Commands {
-    Remove(Remove)
+    Remove(Remove),
 }
 
 #[derive(Parser)]
@@ -99,7 +100,12 @@ impl super::Command for RemoveNoteArgs {
         let mut formatted_ids: String = self.ids.iter().map(|i| i.to_string() + ", ").collect();
         formatted_ids.truncate(formatted_ids.len() - 2);
 
-        println!("Removed note(s) from group `{}` successfully: {}", self.group_name, formatted_ids);
+        println!(
+            "Removed note(s) from group `{}` {}: {}",
+            fg_color!(self.group_name, Yellow),
+            fg_color!("successfully", Green),
+            formatted_ids
+        );
     }
 }
 
@@ -159,6 +165,11 @@ impl super::Command for RemoveTaskArgs {
         let mut formatted_ids: String = self.ids.iter().map(|i| i.to_string() + ", ").collect();
         formatted_ids.truncate(formatted_ids.len() - 2);
 
-        println!("Removed task(s) from group `{}` successfully: {}", self.group_name, formatted_ids);
+        println!(
+            "Removed task(s) from group `{}` {}: {}",
+            fg_color!(self.group_name, Yellow),
+            fg_color!("successfully", Green),
+            formatted_ids
+        );
     }
 }

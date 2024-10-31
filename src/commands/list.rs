@@ -1,4 +1,8 @@
-use crate::{data::{Group, TaskState}, utils, Cli};
+use crate::{
+    data::{Group, TaskState},
+    fg_color, utils, Cli,
+};
+use clap::builder::styling;
 use clap::{error::ErrorKind, Args, CommandFactory};
 
 #[derive(Args)]
@@ -42,7 +46,10 @@ impl super::Command for ListArgs {
         } else if !self.all {
             if data.active_groups.is_empty() {
                 let _ = Cli::command()
-                    .error(ErrorKind::Io, "No groups are being watched (Use --all flag to list all groups)")
+                    .error(
+                        ErrorKind::Io,
+                        "No groups are being watched (Use --all flag to list all groups)",
+                    )
                     .print();
                 return;
             }
@@ -62,7 +69,7 @@ impl super::Command for ListArgs {
         }
 
         for group in &groups {
-            println!("\n[{}]\n", group.name);
+            println!("\n[{}]\n", fg_color!(group.name, Yellow));
             if !group.notes.is_empty() {
                 println!("  Notes:");
                 let mut note_count = 0;
@@ -81,7 +88,7 @@ impl super::Command for ListArgs {
                         TaskState::Complete => "x",
                         TaskState::Incomplete => " ",
                     };
-                    println!("    {} - [{}] {}", task_count, task_state,  task.task);
+                    println!("    {} - [{}] {}", task_count, task_state, task.task);
                 }
                 println!();
             }

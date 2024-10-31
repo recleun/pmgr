@@ -1,11 +1,12 @@
-use crate::data;
+use crate::{data, fg_color};
 use crate::{utils, Cli};
+use clap::builder::styling;
 use clap::error::ErrorKind;
 use clap::{Args, CommandFactory, Parser, Subcommand};
 
 #[derive(Subcommand)]
 pub enum Commands {
-    Add(Add)
+    Add(Add),
 }
 
 #[derive(Parser)]
@@ -65,9 +66,8 @@ impl super::Command for AddNoteArgs {
         data.groups.insert(self.group_name.clone(), group);
         utils::write_data(file_name, &data);
 
-        println!("Added note to group `{}` successfully", self.group_name);
+        println!("Added note to group `{}` {}", self.group_name, fg_color!("successfully", Green));
     }
-
 }
 
 impl super::Command for AddTaskArgs {
@@ -97,6 +97,10 @@ impl super::Command for AddTaskArgs {
         data.groups.insert(self.group_name.clone(), group);
         utils::write_data(file_name, &data);
 
-        println!("Added task to group `{}` successfully", self.group_name);
+        println!(
+            "Added task to group `{}` {}",
+            self.group_name,
+            fg_color!("successfully", Green)
+        );
     }
 }

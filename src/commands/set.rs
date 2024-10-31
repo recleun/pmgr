@@ -1,7 +1,8 @@
 use clap::{error::ErrorKind, Args, CommandFactory, Parser, Subcommand};
+use clap::builder::styling;
 use url::Url;
 
-use crate::utils;
+use crate::{fg_color, utils};
 
 use super::Cli;
 
@@ -54,7 +55,7 @@ impl super::Command for SetTitleArgs {
 
         utils::write_data(file_name, &data);
 
-        println!("New project title set successfully");
+        println!("New project title set {}", fg_color!("successfully", Green));
     }
 }
 
@@ -78,7 +79,10 @@ impl super::Command for SetDescArgs {
 
         utils::write_data(file_name, &data);
 
-        println!("New project description set successfully");
+        println!(
+            "New project description set {}",
+            fg_color!("successfully", Green)
+        );
     }
 }
 
@@ -90,10 +94,7 @@ impl super::Command for SetRepoArgs {
 
         if Url::parse(&self.repo).is_err() {
             let _ = Cli::command()
-                .error(
-                    ErrorKind::InvalidValue,
-                    "An invalid URL was specified",
-                )
+                .error(ErrorKind::InvalidValue, "An invalid URL was specified")
                 .print();
             return;
         }
@@ -102,6 +103,9 @@ impl super::Command for SetRepoArgs {
 
         utils::write_data(file_name, &data);
 
-        println!("New project repository link set successfully");
+        println!(
+            "New project repository link set {}",
+            fg_color!("successfully", Green)
+        );
     }
 }

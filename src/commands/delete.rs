@@ -1,6 +1,7 @@
+use clap::builder::styling;
 use clap::{error::ErrorKind, Args, CommandFactory};
 
-use crate::{utils, Cli};
+use crate::{fg_color, utils, Cli};
 
 #[derive(Args)]
 pub struct DeleteArgs {
@@ -67,7 +68,8 @@ impl super::Command for DeleteArgs {
         utils::write_data(file_name, &data);
 
         println!(
-            "Deleted group(s) successfully: {}",
+            "Deleted group(s) {}: {}",
+            fg_color!("successfully", Green),
             self.group_names.join(", ")
         );
     }

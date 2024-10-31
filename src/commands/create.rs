@@ -1,5 +1,6 @@
 use crate::data::Group;
-use crate::{utils, Cli};
+use crate::{fg_color, utils, Cli};
+use clap::builder::styling;
 use clap::error::ErrorKind;
 use clap::{Args, CommandFactory};
 
@@ -46,6 +47,10 @@ impl super::Command for CreateArgs {
             .insert(self.group_name.to_string(), Group::new(&self.group_name));
         utils::write_data(file_name, &data);
 
-        println!("Added group `{}` to project successfully", self.group_name);
+        println!(
+            "Added group `{}` to project {}",
+            fg_color!(self.group_name, Yellow),
+            fg_color!("successfully", Green)
+        );
     }
 }

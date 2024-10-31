@@ -1,6 +1,7 @@
 use clap::{error::ErrorKind, Args, CommandFactory};
+use clap::builder::styling;
 
-use crate::{utils, Cli};
+use crate::{fg_color, utils, Cli};
 
 #[derive(Args)]
 pub struct UnwatchArgs {
@@ -100,6 +101,10 @@ impl super::Command for UnwatchArgs {
         }
         utils::write_data(file_name, &data);
 
-        println!("Unwatched group(s) successfully: {}", unwatched.join(", "));
+        println!(
+            "Unwatched group(s) {}: {}",
+            fg_color!("successfully", Green),
+            unwatched.join(", ")
+        );
     }
 }

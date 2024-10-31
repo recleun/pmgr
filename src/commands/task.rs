@@ -1,5 +1,6 @@
 use crate::data::{self, Group, TaskState};
-use crate::{utils, Cli};
+use crate::{fg_color, utils, Cli};
+use clap::builder::styling;
 use clap::error::ErrorKind;
 use clap::{Args, CommandFactory, Parser, Subcommand};
 
@@ -89,8 +90,12 @@ fn display_progress(group: Group) {
         used_chars += 1;
     }
 
-    println!("\n[{}]", group.name);
-    println!("[{}] %{}\n", parsed_progress, progress_percentage);
+    println!("\n[{}]", fg_color!(group.name, Yellow));
+    println!(
+        "[{}] %{}\n",
+        fg_color!(parsed_progress, BrightBlack),
+        progress_percentage
+    );
 
     for task in unfinished_tasks {
         println!("  [ ] {}", task.task);
@@ -157,8 +162,10 @@ impl super::Command for TaskCompleteArgs {
         formatted_ids.truncate(formatted_ids.len() - 2);
 
         println!(
-            "Successfully set following tasks for group `{}` as complete: {}",
-            self.group_name, formatted_ids
+            "{} set following tasks for group `{}` as complete: {}",
+            fg_color!("Successfully", Green),
+            fg_color!(self.group_name, Yellow),
+            formatted_ids
         );
     }
 }
@@ -220,8 +227,10 @@ impl super::Command for TaskUndoArgs {
         formatted_ids.truncate(formatted_ids.len() - 2);
 
         println!(
-            "Successfully set following tasks for group `{}` as incomplete: {}",
-            self.group_name, formatted_ids
+            "{} set following tasks for group `{}` as incomplete: {}",
+            fg_color!("Successfully", Green),
+            fg_color!(self.group_name, Yellow),
+            formatted_ids
         );
     }
 }

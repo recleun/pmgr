@@ -1,6 +1,8 @@
 use crate::data;
+use crate::fg_color;
 use crate::utils;
 use crate::utils::ExpectWith;
+use clap::builder::styling;
 use clap::{error::ErrorKind, Args, CommandFactory};
 use std::{fs, io};
 
@@ -19,7 +21,7 @@ impl super::Command for InitArgs {
                     format!("Found already existing project at: {:?}", path),
                 )
                 .print();
-            return
+            return;
         }
 
         match result.unwrap_err() {
@@ -27,7 +29,7 @@ impl super::Command for InitArgs {
                 let project = serde_json::to_string(&data::Project::new())
                     .expect("Failed to serialize project data");
                 fs::write(file_name, project).expect_with("Failed to initialize project");
-                println!("Project intialized successfully");
+                println!("Project intialized {}", fg_color!("successfully", Green));
             }
             e => {
                 let _ = Cli::command()
